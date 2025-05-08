@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+    <Appenders>
+        <!-- File appender for technical logs -->
+        <File name="TechLog" fileName="C:\Users\ASUS\Desktop\CoSpaceApp\logs\tech.log" append="true">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</Pattern>
+            </PatternLayout>
+        </File>
+
+        <!-- Console appender for user messages -->
+        <Console name="UserConsole" target="SYSTEM_OUT">
+            <PatternLayout>
+                <Pattern>*** %d{yyyy-MM-dd HH:mm:ss} INFO  %msg%n</Pattern>
+            </PatternLayout>
+        </Console>
+
+        <!-- SQL Query Logs (Separate File for SQL queries) -->
+        <File name="SQLLog" fileName="C:\Users\ASUS\Desktop\CoSpaceApp\logs\sql.log" append="true">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</Pattern>
+            </PatternLayout>
+        </File>
+        <!-- Mail Logs -->
+        <File name="MailLog" fileName="C:\Users\ASUS\Desktop\CoSpaceApp\logs\mail.log" append="true">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</Pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+
+    <Loggers>
+
+        <!-- Technical Logs -->
+        <Logger name="INTERNAL_LOGGER" level="info" additivity="false">
+            <AppenderRef ref="TechLog"/>
+        </Logger>
+
+        <!-- User Logs (Avoid writing to a file, only console) -->
+        <Logger name="USER_LOGGER" level="info" additivity="false">
+            <AppenderRef ref="UserConsole"/>
+        </Logger>
+
+        <!-- SQL Logs (For Hibernate SQL Queries) -->
+        <Logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+            <AppenderRef ref="SQLLog"/>
+        </Logger>
+        <Logger name="org.hibernate.type.descriptor.sql" level="TRACE" additivity="false">
+            <AppenderRef ref="SQLLog"/>
+        </Logger>
+
+        <!-- Mail Logs -->
+        <Logger name="MAIL_LOGGER" level="info" additivity="false">
+            <AppenderRef ref="MailLog"/>
+        </Logger>
+
+        <Root level="error">
+            <AppenderRef ref="TechLog"/>
+        </Root>
+
+    </Loggers>
+
+</Configuration>

@@ -1,0 +1,55 @@
+# Ignore Gradle cache and wrapper binaries
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Ignore Gradle build outputs
+build/
+*/build/
+
+# Ignore dependency caches
+**/.gradle/
+**/out/
+
+# Ignore IntelliJ IDEA project settings
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+
+# Ignore Maven `target` directories
+target/
+
+# Ignore Maven Wrapper files (except necessary ones)
+.mvn/
+!mvn/wrapper/maven-wrapper.jar
+
+# Ignore Eclipse project files
+.classpath
+.project
+.settings/
+.springBeans/
+.sts4-cache/
+.apt_generated
+.factorypath
+
+# Ignore NetBeans project files
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Ignore Visual Studio Code settings
+.vscode/
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore logs
+logs/
+*.log
