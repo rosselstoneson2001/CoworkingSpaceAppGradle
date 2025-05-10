@@ -23,6 +23,20 @@ public class Reservation {
         this.reservationCreatedAt = reservationCreatedAt;
     }
 
+    public Reservation(Long reservationId,
+                       Long workspaceId,
+                       String customerName,
+                       LocalDateTime startDateTime,
+                       LocalDateTime endDateTime,
+                       LocalDateTime reservationCreatedAt) {
+        this.reservationId = reservationId;
+        this.workspaceId = workspaceId;
+        this.customerName = customerName;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.reservationCreatedAt = reservationCreatedAt;
+    }
+
     public Reservation() {} // For JSON Deserialization
 
     public Long getReservationId() { return reservationId; }

@@ -14,6 +14,13 @@ public class Workspace {
         this.type = type;
     }
 
+    public Workspace(Long workspaceId, BigDecimal price,
+                     String type) {
+        this.workspaceId = workspaceId;
+        this.price = price;
+        this.type = type;
+    }
+
     public Workspace() {} // For JSON Deserialization
 
     public Long getWorkspaceId() { return workspaceId; }
@@ -29,7 +36,7 @@ public class Workspace {
         return "\n================================" +
                 "\nWorkspace ID: " + workspaceId +
                 "\nType: " + type +
-                "\nrice: $" + price +
+                "\nPrice: $" + price +
                 "\n===============================";
     }
 }

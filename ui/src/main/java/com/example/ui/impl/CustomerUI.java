@@ -85,17 +85,20 @@ public class CustomerUI implements Menu {
             USER_LOGGER.info("Workspace booked successfully!");
         } catch (WorkspaceNotFoundException e) {
             USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
-            INTERNAL_LOGGER.error(e.getErrorCode().getCode(), e.getMessage());
+            INTERNAL_LOGGER.error("[{}] - {}", e.getErrorCode().getCode(), e.getMessage());
         } catch (InvalidReservationException e) {
+            USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
+            INTERNAL_LOGGER.error("[{}] - {}", e.getErrorCode().getCode(), e.getMessage());
+        } catch (ReservationNotFoundException e) {
             USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
             INTERNAL_LOGGER.error("[{}] - {}", e.getErrorCode().getCode(), e.getMessage());
         }
     }
 
     private void viewReservation() {
-        InputHelper.getString.supplier(ConstantMessages.ENTER_CUSTOMER_NAME).get();
+        String customerName = InputHelper.getString.supplier(ConstantMessages.ENTER_CUSTOMER_NAME).get();
         try {
-            USER_LOGGER.info("Workspaces: \n{}", workspaceService.getAll());
+            USER_LOGGER.info("Reservations: \n{}", reservationService.findReservationsByCustomer(customerName));
         } catch (ReservationNotFoundException e) {
             USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
             INTERNAL_LOGGER.error("[{}] - {}", e.getErrorCode().getCode(), e.getMessage());

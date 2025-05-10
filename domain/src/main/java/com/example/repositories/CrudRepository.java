@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface CrudRepository<T, K> extends StorageManagerRepository {
+public interface CrudRepository<T, K> {
 
     void add(T entity);
     List<T> getAll();
