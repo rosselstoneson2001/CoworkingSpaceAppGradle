@@ -1,26 +1,29 @@
 plugins {
-    id("java-library")
+    id("java")
+}
+
+group = "com.example"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+
 }
 
 dependencies {
 
+    implementation("org.slf4j:slf4j-api:2.0.9")
     implementation(project(":domain"))
 
-    // Spring Boot
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.4.4")
+    // JUnit for unit testing
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.7.2")
 
-    // Spring Framework
-    implementation("org.springframework:spring-context:5.3.22")
-    implementation("org.springframework:spring-tx:5.3.22")
-
-    // JUnit
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.0")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.0")
-
-    // Mockito
+    // Mockito for mocking dependencies
     testImplementation("org.mockito:mockito-core:5.16.0")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.16.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+
+
 
 }
 

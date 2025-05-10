@@ -1,0 +1,53 @@
+[ {
+  "workspaceId" : 1,
+  "type" : "Office",
+  "price" : 199.99
+}, {
+  "workspaceId" : 2,
+  "type" : "Apartment",
+  "price" : 299.3232
+}, {
+  "workspaceId" : 3,
+  "type" : "House",
+  "price" : 3232.123
+}, {
+  "workspaceId" : 4,
+  "type" : "Duplex",
+  "price" : 12313.231
+}, {
+  "workspaceId" : 5,
+  "type" : "Car",
+  "price" : 213.312
+}, {
+  "workspaceId" : 6,
+  "type" : "Workspace",
+  "price" : 1233.312
+}, {
+  "workspaceId" : 7,
+  "type" : "Balconies",
+  "price" : 232.42
+}, {
+  "workspaceId" : -4528480363240536911,
+  "type" : "Office",
+  "price" : 323.32
+}, {
+  "workspaceId" : -4552261387484378435,
+  "type" : "Private Ofiice",
+  "price" : 32.13
+}, {
+  "workspaceId" : -8746593631363667591,
+  "type" : "Kamil",
+  "price" : 213.213
+}, {
+  "workspaceId" : -6054292238438015594,
+  "type" : "afssdg",
+  "price" : 123.31
+}, {
+  "workspaceId" : -8648644234378559161,
+  "type" : "sdgsdgsgd",
+  "price" : 123.31
+}, {
+  "workspaceId" : -5864129271370755631,
+  "type" : "fqqwdqw",
+  "price" : 321.321
+} ]
