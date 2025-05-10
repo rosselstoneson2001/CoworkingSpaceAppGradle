@@ -1,6 +1,6 @@
 package com.example.repositories;
 
-import com.example.exceptions.DatabaseException;
+import com.example.exceptions.RepositoryException;
 import com.example.repositories.impl.json.DataStorageImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,7 +57,7 @@ public class DataStorageTest {
     void testLoadInvalidJson() throws IOException {
         Files.writeString(testFilePath, "invalid json content");
 
-        assertThrows(DatabaseException.class, () -> dataStorage.load(), "Should throw exception on invalid JSON");
+        assertThrows(RepositoryException.class, () -> dataStorage.load(), "Should throw exception on invalid JSON");
     }
 
 }

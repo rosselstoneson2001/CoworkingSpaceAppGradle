@@ -3,7 +3,7 @@ package com.example.ui.impl;
 import com.example.entities.User;
 import com.example.exceptions.InvalidUserException;
 import com.example.exceptions.UserNotFoundException;
-import com.example.exceptions.enums.ErrorCodes;
+import com.example.exceptions.enums.ValidationErrorCodes;
 import com.example.services.UserService;
 import com.example.ui.Menu;
 import com.example.utils.ConstantMessages;
@@ -45,11 +45,11 @@ public class UserUI implements Menu {
                         USER_LOGGER.info("Exiting user panel...");
                         return;
                     }
-                    default -> USER_LOGGER.error(ConstantMessages.getUserMessage(ErrorCodes.INVALID_CHOICE));
+                    default -> USER_LOGGER.error(ConstantMessages.getValidationUserMessage(ValidationErrorCodes.INVALID_CHOICE));
                 }
             } catch (Exception e) {
-                USER_LOGGER.error(ConstantMessages.getUserMessage(ErrorCodes.INVALID_INPUT));
-                INTERNAL_LOGGER.error("[{}] - {}", ErrorCodes.INVALID_INPUT.getCode(), e.getMessage());
+                USER_LOGGER.error(ConstantMessages.getValidationUserMessage(ValidationErrorCodes.INVALID_INPUT));
+                INTERNAL_LOGGER.error("[{}] - {}", ValidationErrorCodes.INVALID_INPUT.getCode(), e.getMessage());
                 sc.nextLine(); // Clear invalid input
             }
         }
@@ -66,7 +66,7 @@ public class UserUI implements Menu {
             userService.create(user);
             USER_LOGGER.info("User created successfully!");
         } catch (InvalidUserException e) {
-            USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
+            USER_LOGGER.error(ConstantMessages.getValidationUserMessage(e.getErrorCode()));
             INTERNAL_LOGGER.error("[{}] - {}", e.getErrorCode().getCode(), e.getMessage());
         }
     }
@@ -77,7 +77,7 @@ public class UserUI implements Menu {
             List<User> users = userService.getAll();
             USER_LOGGER.info("User: \n{}", users);
         } catch (UserNotFoundException e) {
-            USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
+            USER_LOGGER.error(ConstantMessages.getNotFoundUserMessage(e.getErrorCode()));
             INTERNAL_LOGGER.error("[{}] - {}", e.getErrorCode().getCode(), e.getMessage());
         }
     }
@@ -88,7 +88,7 @@ public class UserUI implements Menu {
             userService.remove(userId);
             USER_LOGGER.info("User with ID {} removed successfully!", userId);
         } catch (UserNotFoundException e) {
-            USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
+            USER_LOGGER.error(ConstantMessages.getNotFoundUserMessage(e.getErrorCode()));
             INTERNAL_LOGGER.error("[{}] - {}", e.getErrorCode().getCode(), e.getMessage());
         }
     }
@@ -106,11 +106,11 @@ public class UserUI implements Menu {
                 USER_LOGGER.warn("Invalid password entered for user with ID {}.", userId);
             }
         } catch (UserNotFoundException e) {
-            USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
+            USER_LOGGER.error(ConstantMessages.getNotFoundUserMessage(e.getErrorCode()));
             INTERNAL_LOGGER.error("[{}] - {}", e.getErrorCode().getCode(), e.getMessage());
         } catch (InvalidUserException e) {
-            USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
-            INTERNAL_LOGGER.error("[{}] - {}", ErrorCodes.INVALID_INPUT.getCode(), e.getMessage());
+            USER_LOGGER.error(ConstantMessages.getValidationUserMessage(e.getErrorCode()));
+            INTERNAL_LOGGER.error("[{}] - {}", ValidationErrorCodes.INVALID_INPUT.getCode(), e.getMessage());
         }
     }
 }

@@ -4,7 +4,7 @@ import com.example.entities.Workspace;
 import com.example.exceptions.InvalidWorkspaceException;
 import com.example.exceptions.ReservationNotFoundException;
 import com.example.exceptions.WorkspaceNotFoundException;
-import com.example.exceptions.enums.ErrorCodes;
+import com.example.exceptions.enums.ValidationErrorCodes;
 import com.example.services.ReservationService;
 import com.example.services.WorkspaceService;
 import com.example.ui.Menu;
@@ -49,11 +49,11 @@ public class AdminUI implements Menu {
                         USER_LOGGER.info("Exiting admin panel...");
                         return;
                     }
-                    default -> USER_LOGGER.error(ConstantMessages.getUserMessage(ErrorCodes.INVALID_CHOICE));
+                    default -> USER_LOGGER.error(ConstantMessages.getValidationUserMessage(ValidationErrorCodes.INVALID_CHOICE));
                 }
             } catch (InputMismatchException e) {
-                USER_LOGGER.error(ConstantMessages.getUserMessage(ErrorCodes.INVALID_INPUT));
-                INTERNAL_LOGGER.error("[{}] - {}", ErrorCodes.INVALID_INPUT.getCode(), "Input was not a valid number.");
+                USER_LOGGER.error(ConstantMessages.getValidationUserMessage(ValidationErrorCodes.INVALID_INPUT));
+                INTERNAL_LOGGER.error("[{}] - {}", ValidationErrorCodes.INVALID_INPUT.getCode(), "Input was not a valid number.");
 
                 sc.nextLine(); // Clear invalid input
             }
@@ -69,7 +69,7 @@ public class AdminUI implements Menu {
             workspaceService.create(new Workspace(price, type));
             USER_LOGGER.info("Workspace added successfully!");
         } catch (InvalidWorkspaceException e) {
-            USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
+            USER_LOGGER.error(ConstantMessages.getValidationUserMessage(e.getErrorCode()));
             INTERNAL_LOGGER.error("[{}] - {}", e.getErrorCode().getCode(), e.getMessage());
         }
     }
@@ -80,7 +80,7 @@ public class AdminUI implements Menu {
             workspaceService.remove(workspaceId);
             USER_LOGGER.info("Workspace with ID {} removed successfully!", workspaceId);
         } catch (WorkspaceNotFoundException e) {
-            USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
+            USER_LOGGER.error(ConstantMessages.getNotFoundUserMessage(e.getErrorCode()));
             INTERNAL_LOGGER.error("[{}] - {}", e.getErrorCode().getCode(), e.getMessage());
         }
     }
@@ -90,7 +90,7 @@ public class AdminUI implements Menu {
             USER_LOGGER.info("Displaying all reservations:");
             USER_LOGGER.info("Reservations: \n{}", reservationService.getAll());
         } catch (ReservationNotFoundException e) {
-            USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
+            USER_LOGGER.error(ConstantMessages.getNotFoundUserMessage(e.getErrorCode()));
             INTERNAL_LOGGER.error("[{}] - {}", e.getErrorCode().getCode(), e.getMessage());
         }
     }

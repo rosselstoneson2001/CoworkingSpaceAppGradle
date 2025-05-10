@@ -1,18 +1,34 @@
 package com.example.exceptions;
 
 
-import com.example.exceptions.enums.ErrorCodes;
+import com.example.exceptions.enums.RepositoryErrorCodes;
+import com.example.exceptions.enums.NotFoundErrorCodes;
 
+/**
+ * Custom exception class to represent the case when a workspace is not found.
+ * This exception is thrown when an attempt to find a workspace fails.
+ */
 public class WorkspaceNotFoundException extends RuntimeException {
 
-    private final ErrorCodes errorCode;
+    private final NotFoundErrorCodes errorCode;
 
-    public WorkspaceNotFoundException(ErrorCodes errorCode, String message) {
+    /**
+     * Constructs a new WorkspaceNotFoundException with the specified error code and detail message.
+     *
+     * @param errorCode The error code associated with the exception, which can be found in the {@link RepositoryErrorCodes} enum.
+     * @param message   The detail message to be passed with the exception.
+     */
+    public WorkspaceNotFoundException(NotFoundErrorCodes errorCode, String message) {
         super(message);
-        this.errorCode = ErrorCodes.WORKSPACE_NOT_FOUND;
+        this.errorCode = NotFoundErrorCodes.WORKSPACE_NOT_FOUND;
     }
 
-    public ErrorCodes getErrorCode() {
+    /**
+     * Returns the error code associated with this exception.
+     *
+     * @return The {@link RepositoryErrorCodes} enum value representing the specific error.
+     */
+    public NotFoundErrorCodes getErrorCode() {
         return errorCode;
     }
 }

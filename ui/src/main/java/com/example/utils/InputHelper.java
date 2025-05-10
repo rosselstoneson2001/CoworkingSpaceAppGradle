@@ -9,6 +9,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
+/**
+ * A utility class to handle various types of user input.
+ * It provides methods for obtaining input in different formats, including Integer, Long, String, BigDecimal, and LocalDateTime.
+ * The input is validated, and appropriate error messages are logged in case of invalid input.
+ */
 public class InputHelper {
 
     private static final Logger USER_LOGGER = LoggerFactory.getLogger("USER_LOGGER");

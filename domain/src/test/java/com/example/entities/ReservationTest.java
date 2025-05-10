@@ -2,6 +2,7 @@ package com.example.entities;
 
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,9 +16,13 @@ public class ReservationTest {
         LocalDateTime startDateTime = now.plusDays(1);
         LocalDateTime endDateTime = now.plusDays(2);
 
+        Workspace workspace = new Workspace();
+        workspace.setWorkspaceId(1L);
+        workspace.setType("Meeting Room");
+        workspace.setPrice(BigDecimal.valueOf(150.00));
 
         Reservation reservation = new Reservation(
-                1L,
+                workspace,
                 "John Doe",
                 startDateTime,
                 endDateTime,
@@ -25,7 +30,7 @@ public class ReservationTest {
         );
 
         assertNull(reservation.getReservationId()); // ID is not initialized
-        assertEquals(1L, reservation.getWorkspaceId());
+        assertEquals(workspace, reservation.getWorkspace());
         assertEquals("John Doe", reservation.getCustomerName());
         assertEquals(startDateTime, reservation.getStartDateTime());
         assertEquals(endDateTime, reservation.getEndDateTime());
@@ -36,8 +41,13 @@ public class ReservationTest {
     void testReservationSetters() {
         Reservation reservation = new Reservation();
 
+        Workspace workspace = new Workspace();
+        workspace.setWorkspaceId(2L);
+        workspace.setType("Private Office");
+        workspace.setPrice(BigDecimal.valueOf(100.00));
+
         reservation.setReservationId(100L);
-        reservation.setWorkspaceId(2L);
+        reservation.setWorkspace(workspace);
         reservation.setCustomerName("Alice Smith");
         LocalDateTime start = LocalDateTime.of(2025, 5, 1, 10, 0);
         LocalDateTime end = LocalDateTime.of(2025, 5, 1, 12, 0);
@@ -48,7 +58,7 @@ public class ReservationTest {
         reservation.setReservationCreatedAt(createdAt);
 
         assertEquals(100L, reservation.getReservationId());
-        assertEquals(2L, reservation.getWorkspaceId());
+        assertEquals(2L, reservation.getWorkspace().getWorkspaceId());
         assertEquals("Alice Smith", reservation.getCustomerName());
         assertEquals(start, reservation.getStartDateTime());
         assertEquals(end, reservation.getEndDateTime());

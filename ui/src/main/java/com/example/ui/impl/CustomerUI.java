@@ -2,10 +2,11 @@ package com.example.ui.impl;
 
 
 import com.example.entities.Reservation;
+import com.example.entities.Workspace;
 import com.example.exceptions.InvalidReservationException;
 import com.example.exceptions.ReservationNotFoundException;
 import com.example.exceptions.WorkspaceNotFoundException;
-import com.example.exceptions.enums.ErrorCodes;
+import com.example.exceptions.enums.ValidationErrorCodes;
 import com.example.services.ReservationService;
 import com.example.services.WorkspaceService;
 import com.example.ui.Menu;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.InputMismatchException;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class CustomerUI implements Menu {
@@ -52,11 +54,12 @@ public class CustomerUI implements Menu {
                         USER_LOGGER.info("Exiting customer menu...");
                         return;
                     }
-                    default -> USER_LOGGER.error(ConstantMessages.getUserMessage(ErrorCodes.INVALID_CHOICE));
+                    default ->
+                            USER_LOGGER.error(ConstantMessages.getValidationUserMessage(ValidationErrorCodes.INVALID_CHOICE));
                 }
             } catch (InputMismatchException e) {
-                USER_LOGGER.error(ConstantMessages.getUserMessage(ErrorCodes.INVALID_INPUT));
-                INTERNAL_LOGGER.error("[{}] - {}", ErrorCodes.INVALID_INPUT.getCode(), "Input was not a valid number.");
+                USER_LOGGER.error(ConstantMessages.getValidationUserMessage(ValidationErrorCodes.INVALID_INPUT));
+                INTERNAL_LOGGER.error("[{}] - {}", ValidationErrorCodes.INVALID_INPUT.getCode(), "Input was not a valid number.");
                 sc.nextLine(); // Clear invalid input
             }
         }
@@ -68,7 +71,7 @@ public class CustomerUI implements Menu {
             USER_LOGGER.info("Displaying all available workspaces:");
             USER_LOGGER.info(workspaceService.getAll().toString());
         } catch (WorkspaceNotFoundException e) {
-            USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
+            USER_LOGGER.error(ConstantMessages.getNotFoundUserMessage(e.getErrorCode()));
             INTERNAL_LOGGER.error("[{}] - {}", e.getErrorCode().getCode(), e.getMessage());
         }
     }
@@ -76,21 +79,24 @@ public class CustomerUI implements Menu {
     private void makeReservation() {
 
         Long workspaceId = InputHelper.getLong.supplier(ConstantMessages.ENTER_SPACE_ID).get();
+        Optional<Workspace> optionalWorkspace = workspaceService.getById(workspaceId);
+        Workspace workspace = optionalWorkspace.get();
+
         String customerName = InputHelper.getString.supplier(ConstantMessages.ENTER_CUSTOMER_NAME).get();
         LocalDateTime startDateTime = InputHelper.getDateTime.supplier(ConstantMessages.ENTER_START_DATE).get();
         LocalDateTime endDateTime = InputHelper.getDateTime.supplier(ConstantMessages.ENTER_END_DATE).get();
 
         try {
-            reservationService.create(new Reservation(workspaceId, customerName, startDateTime, endDateTime, LocalDateTime.now()));
+            reservationService.create(new Reservation(workspace, customerName, startDateTime, endDateTime, LocalDateTime.now()));
             USER_LOGGER.info("Workspace booked successfully!");
         } catch (WorkspaceNotFoundException e) {
-            USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
+            USER_LOGGER.error(ConstantMessages.getNotFoundUserMessage(e.getErrorCode()));
             INTERNAL_LOGGER.error("[{}] - {}", e.getErrorCode().getCode(), e.getMessage());
         } catch (InvalidReservationException e) {
-            USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
+            USER_LOGGER.error(ConstantMessages.getValidationUserMessage(e.getErrorCode()));
             INTERNAL_LOGGER.error("[{}] - {}", e.getErrorCode().getCode(), e.getMessage());
         } catch (ReservationNotFoundException e) {
-            USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
+            USER_LOGGER.error(ConstantMessages.getNotFoundUserMessage(e.getErrorCode()));
             INTERNAL_LOGGER.error("[{}] - {}", e.getErrorCode().getCode(), e.getMessage());
         }
     }
@@ -100,7 +106,7 @@ public class CustomerUI implements Menu {
         try {
             USER_LOGGER.info("Reservations: \n{}", reservationService.findReservationsByCustomer(customerName));
         } catch (ReservationNotFoundException e) {
-            USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
+            USER_LOGGER.error(ConstantMessages.getNotFoundUserMessage(e.getErrorCode()));
             INTERNAL_LOGGER.error("[{}] - {}", e.getErrorCode().getCode(), e.getMessage());
         }
 
@@ -112,9 +118,8 @@ public class CustomerUI implements Menu {
             reservationService.remove(reservationId);
             USER_LOGGER.info("Reservation ID {} cancelled successfully.", reservationId);
         } catch (ReservationNotFoundException e) {
-            USER_LOGGER.error(ConstantMessages.getUserMessage(e.getErrorCode()));
+            USER_LOGGER.error(ConstantMessages.getNotFoundUserMessage(e.getErrorCode()));
             INTERNAL_LOGGER.error("[{}] - {}", e.getErrorCode().getCode(), e.getMessage());
         }
     }
-
 }

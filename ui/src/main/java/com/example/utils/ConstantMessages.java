@@ -1,9 +1,15 @@
 package com.example.utils;
 
-import com.example.exceptions.enums.ErrorCodes;
+import com.example.exceptions.enums.NotFoundErrorCodes;
+import com.example.exceptions.enums.ValidationErrorCodes;
 
 import java.util.Map;
 
+/**
+ * A utility class that contains constant messages used throughout the application.
+ * This class includes menu prompts, user messages, and error messages that are displayed to the user
+ * during interaction with the application.
+ */
 public class ConstantMessages {
 
     public static final String MAIN_MENU =
@@ -57,20 +63,23 @@ public class ConstantMessages {
 
 
 
-    public static final Map<ErrorCodes, String> userMessages = Map.of(
-            ErrorCodes.RESERVATION_NOT_FOUND, "Reservation not found.",
-            ErrorCodes.INVALID_RESERVATION, "Invalid reservation. Please check the provided details.",
-            ErrorCodes.USER_NOT_FOUND, "User not found.",
-            ErrorCodes.INVALID_USER, "Invalid user. Please check the provided details.",
-            ErrorCodes.WORKSPACE_NOT_FOUND, "Workspace not found.",
-            ErrorCodes.INVALID_WORKSPACE, "Invalid workspace. Please check the provided details.",
-            ErrorCodes.INVALID_INPUT, "Invalid input! Please try again.",
-            ErrorCodes.INVALID_CHOICE, "Invalid choice! Please try again."
+    public static final Map<ValidationErrorCodes, String> validationUserMessages = Map.of(
+            ValidationErrorCodes.INVALID_INPUT, "Invalid input! Please try again.",
+            ValidationErrorCodes.INVALID_CHOICE, "Invalid choice! Please try again."
 
     );
+    public static final Map<NotFoundErrorCodes, String> notFoundUserMessages = Map.of(
+            NotFoundErrorCodes.USER_NOT_FOUND, "User not found.",
+            NotFoundErrorCodes.RESERVATION_NOT_FOUND, "Reservation not found.",
+            NotFoundErrorCodes.WORKSPACE_NOT_FOUND, "Workspace not found."
+    );
 
-    public static String getUserMessage(ErrorCodes errorCode) {
-        return userMessages.getOrDefault(errorCode, "An unknown error occurred.");
+    public static String getValidationUserMessage(ValidationErrorCodes errorCode) {
+        return validationUserMessages.getOrDefault(errorCode, "An unknown error occurred.");
+    }
+
+    public static String getNotFoundUserMessage(NotFoundErrorCodes errorCode) {
+        return notFoundUserMessages.getOrDefault(errorCode, "An unknown error occurred.");
     }
 
 }

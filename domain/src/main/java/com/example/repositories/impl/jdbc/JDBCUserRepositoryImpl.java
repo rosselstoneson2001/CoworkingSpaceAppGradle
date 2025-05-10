@@ -2,7 +2,9 @@ package com.example.repositories.impl.jdbc;
 
 import com.example.config.JDBConnection;
 import com.example.entities.User;
-import com.example.exceptions.enums.ErrorCodes;
+import com.example.exceptions.RepositoryException;
+import com.example.exceptions.enums.NotFoundErrorCodes;
+import com.example.exceptions.enums.RepositoryErrorCodes;
 import com.example.repositories.UserRepository;
 import com.example.utils.PasswordUtils;
 import org.slf4j.Logger;
@@ -17,6 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of {@link UserRepository} using JDBC for interacting with the user data in a relational database.
+ * Provides methods to perform CRUD operations on users, such as adding, retrieving, updating, and deleting users.
+ */
 public class JDBCUserRepositoryImpl implements UserRepository {
 
     private static final Logger INTERNAL_LOGGER = LoggerFactory.getLogger("INTERNAL_LOGGER");
@@ -26,6 +32,13 @@ public class JDBCUserRepositoryImpl implements UserRepository {
         this.dataSource = JDBConnection.getDataSource();
     }
 
+    /**
+     * Adds a new user to the database.
+     * Passwords are hashed before being stored.
+     *
+     * @param entity The user to be added.
+     * @throws RepositoryException if there is an error while inserting the user.
+     */
     @Override
     public void add(User entity) {
 
@@ -50,10 +63,17 @@ public class JDBCUserRepositoryImpl implements UserRepository {
                 }
             }
         } catch (SQLException e) {
-            INTERNAL_LOGGER.error(ErrorCodes.INVALID_USER.getCode(), "Error adding user! \nDetails: {}", e.getMessage(), e);
+            INTERNAL_LOGGER.error(RepositoryErrorCodes.DATA_INTEGRITY_VIOLATION.getCode(), "Failed to create a user! \nDetails: {}", e.getMessage(), e);
+            throw new RepositoryException(RepositoryErrorCodes.DATA_INTEGRITY_VIOLATION, "Failed to create a user: \n" + e);
         }
     }
 
+    /**
+     * Retrieves all users from the database.
+     *
+     * @return A list of all users.
+     * @throws RepositoryException if there is an error while fetching the users.
+     */
     @Override
     public List<User> getAll() {
         String sql = "SELECT * FROM users";
@@ -74,12 +94,20 @@ public class JDBCUserRepositoryImpl implements UserRepository {
                 users.add(user);
             }
         } catch (SQLException e) {
-            INTERNAL_LOGGER.error("Error fetching all users! \nDetails: {}", e.getMessage(), e);
+            INTERNAL_LOGGER.error(RepositoryErrorCodes.DATA_RETRIEVAL_ERROR.getCode(), "Error fetching all users! \nDetails: {}", e.getMessage(), e);
+            throw new RepositoryException(RepositoryErrorCodes.DATA_RETRIEVAL_ERROR, "Failed to retrieve all users: \n" + e);
         }
 
         return users;
     }
 
+    /**
+     * Retrieves a user by their unique user ID.
+     *
+     * @param id The ID of the user to retrieve.
+     * @return An Optional containing the user if found, otherwise an empty Optional.
+     * @throws RepositoryException if there is an error while fetching the user.
+     */
     @Override
     public Optional<User> getById(Long id) {
         String sql = "SELECT * FROM users WHERE user_id = ?";
@@ -102,12 +130,19 @@ public class JDBCUserRepositoryImpl implements UserRepository {
                 }
             }
         } catch (SQLException e) {
-            INTERNAL_LOGGER.error("Error fetching user by ID! \nDetails: {}", e.getMessage(), e);
+            INTERNAL_LOGGER.error(RepositoryErrorCodes.DATA_RETRIEVAL_ERROR.getCode(), "Error fetching user with ID: {} \nDetails: {}", id, e.getMessage(), e);
+            throw new RepositoryException(RepositoryErrorCodes.DATA_RETRIEVAL_ERROR, "Failed to retrieve user by ID. \n" + e);
         }
 
         return Optional.empty();
     }
 
+    /**
+     * Removes a user from the database by their user ID.
+     *
+     * @param id The ID of the user to remove.
+     * @throws RepositoryException if there is an error while removing the user.
+     */
     @Override
     public void remove(Long id) {
         String sql = "DELETE FROM users WHERE user_id = ?";
@@ -120,10 +155,11 @@ public class JDBCUserRepositoryImpl implements UserRepository {
             if (rowsAffected > 0) {
                 INTERNAL_LOGGER.info("User with ID {} deleted successfully.", id);
             } else {
-                INTERNAL_LOGGER.warn("No user found with ID {} to delete.", id);
+                INTERNAL_LOGGER.warn(NotFoundErrorCodes.USER_NOT_FOUND.getCode(), "No user found with ID {} to delete.", id);
             }
         } catch (SQLException e) {
-            INTERNAL_LOGGER.error("Error removing user! \nDetails: {}", e.getMessage(), e);
+            INTERNAL_LOGGER.error(RepositoryErrorCodes.DATA_REMOVAL_ERROR.getCode(), "Failed to remove user with ID: {}! \nDetails: {}", id, e.getMessage(), e);
+            throw new RepositoryException(RepositoryErrorCodes.DATA_REMOVAL_ERROR, "Failed to remove user by ID. \n" + e);
         }
     }
 }

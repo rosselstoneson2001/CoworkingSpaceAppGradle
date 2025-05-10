@@ -3,20 +3,20 @@ package com.example.exceptions;
 import com.example.exceptions.enums.RepositoryErrorCodes;
 
 /**
- * Custom exception class to represent invalid input errors.
- * This exception is thrown when the input provided by the user is invalid.
+ * Custom exception class to represent database-related errors.
+ * This exception is thrown when a database operation fails or encounters an error.
  */
-public class InvalidInputException extends RuntimeException {
+    public class RepositoryException extends RuntimeException {
 
     private final RepositoryErrorCodes errorCode;
 
     /**
-     * Constructs a new InvalidInputException with the specified error code and detail message.
+     * Constructs a new RepositoryException with the specified error code and detail message.
      *
      * @param errorCode The error code associated with the exception, which can be found in the {@link RepositoryErrorCodes} enum.
      * @param message   The detail message to be passed with the exception.
      */
-    public InvalidInputException(RepositoryErrorCodes errorCode, String message) {
+    public RepositoryException(RepositoryErrorCodes errorCode, String message) {
         super(message);
         this.errorCode = errorCode;
     }
