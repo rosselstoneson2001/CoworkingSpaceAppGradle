@@ -6,6 +6,6 @@ import java.util.List;
 public interface DataStorage<E> {
 
     void save(Collection<E> data);
-
     List<E> load();
+
 }

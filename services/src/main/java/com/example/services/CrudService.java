@@ -5,7 +5,7 @@ import com.example.repositories.StorageManagerRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface CrudService<T, K> extends StorageManagerRepository {
+public interface CrudService<T, K>  {
 
     void create(T entity);
     List<T> getAll();

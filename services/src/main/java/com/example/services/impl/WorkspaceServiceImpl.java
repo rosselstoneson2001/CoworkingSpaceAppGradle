@@ -53,15 +53,15 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     }
 
 
-    @Override
-    public void save() {
-        workspaceRepository.save();
-    }
-
-    @Override
-    public void load() {
-        workspaceRepository.load();
-    }
+//    @Override
+//    public void save() {
+//        workspaceRepository.save();
+//    }
+//
+//    @Override
+//    public void load() {
+//        workspaceRepository.load();
+//    }
 
 
 }

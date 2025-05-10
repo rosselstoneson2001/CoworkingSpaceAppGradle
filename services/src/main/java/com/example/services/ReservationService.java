@@ -2,12 +2,11 @@ package com.example.services;
 
 
 import com.example.entities.Reservation;
-import com.example.repositories.StorageManagerRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface ReservationService extends CrudService<Reservation, Long>, StorageManagerRepository {
+public interface ReservationService extends CrudService<Reservation, Long> {
 
     List<Reservation> findReservationsByCustomer(String customerName);
 

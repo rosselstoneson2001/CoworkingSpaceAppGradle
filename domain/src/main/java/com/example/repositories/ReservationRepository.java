@@ -4,7 +4,7 @@ import com.example.entities.Reservation;
 
 import java.util.List;
 
-public interface ReservationRepository extends CrudRepository<Reservation, Long>, StorageManagerRepository {
+public interface ReservationRepository extends CrudRepository<Reservation, Long> {
 
     List<Reservation> getReservationsByCustomer(String customerName);
 

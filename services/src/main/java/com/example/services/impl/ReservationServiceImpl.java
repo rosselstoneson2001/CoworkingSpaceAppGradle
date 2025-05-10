@@ -10,6 +10,8 @@ import com.example.exceptions.enums.ErrorCodes;
 import com.example.repositories.ReservationRepository;
 import com.example.services.ReservationService;
 import com.example.services.WorkspaceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.Optional;
 
 public class ReservationServiceImpl implements ReservationService {
 
+    private static final Logger INTERNAL_LOGGER = LoggerFactory.getLogger("INTERNAL_LOGGER");
     private final ReservationRepository reservationRepository;
     private final WorkspaceService workspaceService;
 
@@ -68,11 +71,16 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public List<Reservation> findReservationsByCustomer(String customerName) {
-
         if (customerName.trim().isEmpty()) {
             throw new InvalidReservationException(ErrorCodes.INVALID_WORKSPACE, "Customer name cannot be empty.");
         }
-        return reservationRepository.getReservationsByCustomer(customerName);
+
+        List<Reservation> reservations = reservationRepository.getReservationsByCustomer(customerName);
+        if (reservations.isEmpty()) {
+            throw new ReservationNotFoundException(ErrorCodes.RESERVATION_NOT_FOUND, "No reservations found for customer: " + customerName);
+
+        }
+        return reservations;
     }
 
     @Override
@@ -93,19 +101,23 @@ public class ReservationServiceImpl implements ReservationService {
         }
     }
 
-    @Override
-    public void save() {
-        reservationRepository.save();
-    }
-
-    @Override
-    public void load() {
-        reservationRepository.load();
-    }
+//    @Override
+//    public void save() {
+//        reservationRepository.save();
+//    }
+//
+//    @Override
+//    public void load() {
+//        reservationRepository.load();
+//    }
 
     @Override
     public boolean isWorkspaceAvailable(Long workspaceId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         List<Reservation> reservations = findReservationsByWorkspace(workspaceId);
+
+        if (reservations.isEmpty()) {
+            return true;
+        }
 
         return reservations.stream()
                 .noneMatch(r -> !(endDateTime.isBefore(r.getStartDateTime()) || startDateTime.isAfter(r.getEndDateTime())));
