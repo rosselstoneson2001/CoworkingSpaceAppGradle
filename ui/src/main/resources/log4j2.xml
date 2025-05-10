@@ -14,6 +14,13 @@
                 <Pattern>*** %d{yyyy-MM-dd HH:mm:ss} INFO  %msg%n</Pattern>
             </PatternLayout>
         </Console>
+
+        <!-- SQL Query Logs (Separate File for SQL queries) -->
+        <File name="SQLLog" fileName="logs/sql.log" append="true">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</Pattern>
+            </PatternLayout>
+        </File>
     </Appenders>
 
     <Loggers>
@@ -25,6 +32,15 @@
         <!-- User Logs (Avoid writing to a file, only console) -->
         <Logger name="USER_LOGGER" level="info" additivity="false">
             <AppenderRef ref="UserConsole"/>
+        </Logger>
+
+        <!-- SQL Logs (For Hibernate SQL Queries) -->
+        <Logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+            <AppenderRef ref="SQLLog"/>
+        </Logger>
+
+        <Logger name="org.hibernate.type.descriptor.sql" level="TRACE" additivity="false">
+            <AppenderRef ref="SQLLog"/>
         </Logger>
 
         <Root level="error">

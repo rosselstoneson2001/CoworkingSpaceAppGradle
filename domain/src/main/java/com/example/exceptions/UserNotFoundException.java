@@ -1,17 +1,33 @@
 package com.example.exceptions;
 
-import com.example.exceptions.enums.ErrorCodes;
+import com.example.exceptions.enums.RepositoryErrorCodes;
+import com.example.exceptions.enums.NotFoundErrorCodes;
 
+/**
+ * Custom exception class to represent the case when a user is not found.
+ * This exception is thrown when an attempt to find a user fails.
+ */
 public class UserNotFoundException extends RuntimeException {
 
-    private final ErrorCodes errorCode;
+    private final NotFoundErrorCodes errorCode;
 
-    public UserNotFoundException(ErrorCodes errorCodes, String message) {
+    /**
+     * Constructs a new UserNotFoundException with the specified error code and detail message.
+     *
+     * @param errorCode The error code associated with the exception, which can be found in the {@link NotFoundErrorCodes} enum.
+     * @param message   The detail message to be passed with the exception.
+     */
+    public UserNotFoundException(NotFoundErrorCodes errorCode, String message) {
         super(message);
-        this.errorCode = ErrorCodes.INVALID_WORKSPACE;
+        this.errorCode = NotFoundErrorCodes.USER_NOT_FOUND;
     }
 
-    public ErrorCodes getErrorCode() {
+    /**
+     * Returns the error code associated with this exception.
+     *
+     * @return The {@link RepositoryErrorCodes} enum value representing the specific error.
+     */
+    public NotFoundErrorCodes getErrorCode() {
         return errorCode;
     }
 }

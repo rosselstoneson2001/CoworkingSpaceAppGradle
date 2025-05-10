@@ -2,6 +2,7 @@ package com.example.services.impl;
 
 import com.example.entities.Workspace;
 import com.example.exceptions.InvalidWorkspaceException;
+import com.example.exceptions.enums.ValidationErrorCodes;
 import com.example.repositories.WorkspaceRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,20 +65,6 @@ public class WorkspaceServiceTest {
         verify(workspaceRepository).remove(1L);
     }
 
-    @Test
-    void shouldSaveWorkspaces() {
-        workspaceService.save();
-
-        verify(workspaceRepository).save();
-    }
-
-    @Test
-    void shouldLoadWorkspaces() {
-        workspaceService.load();
-
-        verify(workspaceRepository).load();
-    }
-
     // Exception testing
 
     @Test
@@ -112,7 +99,7 @@ public class WorkspaceServiceTest {
     void shouldThrowExceptionWhenRepositoryThrowsError() {
         Workspace workspace = new Workspace(new BigDecimal("100.0"), "Office");
 
-        doThrow(new InvalidWorkspaceException("Invalid data")).when(workspaceRepository).add(any());
+        doThrow(new InvalidWorkspaceException(ValidationErrorCodes.INVALID_DATE, "Invalid data")).when(workspaceRepository).add(any());
 
         InvalidWorkspaceException thrown = assertThrows(InvalidWorkspaceException.class,
                 () -> workspaceService.create(workspace));

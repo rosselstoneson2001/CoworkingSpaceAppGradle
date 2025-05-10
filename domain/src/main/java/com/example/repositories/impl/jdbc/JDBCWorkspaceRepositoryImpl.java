@@ -2,7 +2,8 @@ package com.example.repositories.impl.jdbc;
 
 import com.example.config.JDBConnection;
 import com.example.entities.Workspace;
-import com.example.exceptions.enums.ErrorCodes;
+import com.example.exceptions.RepositoryException;
+import com.example.exceptions.enums.RepositoryErrorCodes;
 import com.example.repositories.WorkspaceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of {@link WorkspaceRepository} using JDBC for interacting with the workspace data in a relational database.
+ * Provides methods to perform CRUD operations on workspaces, such as adding, retrieving, updating, and deleting workspaces.
+ */
 public class JDBCWorkspaceRepositoryImpl implements WorkspaceRepository {
 
     private static final Logger INTERNAL_LOGGER = LoggerFactory.getLogger("INTERNAL_LOGGER");
@@ -25,6 +30,12 @@ public class JDBCWorkspaceRepositoryImpl implements WorkspaceRepository {
         this.dataSource = JDBConnection.getDataSource();
     }
 
+    /**
+     * Adds a new workspace entity to the database.
+     *
+     * @param entity The workspace entity to be added.
+     * @throws RepositoryException if there is an error while adding the workspace to the database.
+     */
     @Override
     public void add(Workspace entity) {
         String sql = "INSERT INTO workspace (type, price) VALUES (?, ?) RETURNING workspace_id";
@@ -42,11 +53,19 @@ public class JDBCWorkspaceRepositoryImpl implements WorkspaceRepository {
             INTERNAL_LOGGER.info("Workspace inserted successfully! ID={}, Type='{}', Price={}",
                     resultSet.getLong("workspace_id"), entity.getType(), entity.getPrice());
         } catch (SQLException e) {
-            INTERNAL_LOGGER.error(ErrorCodes.DATABASE_ERROR.getCode(), "Failed to insert workspace! Type='{}', Price={}, Error={}",
+            INTERNAL_LOGGER.error(RepositoryErrorCodes.DATA_INTEGRITY_VIOLATION.getCode(), "Failed to insert workspace! Type='{}', Price={}, Error={}",
             entity.getType(), entity.getPrice(), e.getMessage(), e);
+            throw new RepositoryException(RepositoryErrorCodes.DATA_INTEGRITY_VIOLATION, "Failed to add workspaces: \n" + e);
+
         }
     }
 
+    /**
+     * Retrieves all workspaces from the database.
+     *
+     * @return A list of all workspaces.
+     * @throws RepositoryException if there is an error while fetching the workspaces from the database.
+     */
     @Override
     public List<Workspace> getAll() {
         List<Workspace> workspaces = new ArrayList<>();
@@ -66,12 +85,20 @@ public class JDBCWorkspaceRepositoryImpl implements WorkspaceRepository {
             }
             INTERNAL_LOGGER.info("Retrieved {} workspaces from database", workspaces.size());
         } catch (SQLException e) {
-            INTERNAL_LOGGER.error(ErrorCodes.DATABASE_ERROR.getCode(), "Failed to retrieve workspaces! \nDetails={}", e.getMessage(), e);
+            INTERNAL_LOGGER.error(RepositoryErrorCodes.DATA_RETRIEVAL_ERROR.getCode(), "Failed to retrieve workspaces! \nDetails={}", e.getMessage(), e);
+            throw new RepositoryException(RepositoryErrorCodes.DATA_RETRIEVAL_ERROR, "Failed to retrieve workspaces: \n" + e);
 
         }
         return workspaces;
     }
 
+    /**
+     * Retrieves a workspace by its ID from the database.
+     *
+     * @param id The ID of the workspace to retrieve.
+     * @return An {@link Optional} containing the workspace if found, otherwise an empty {@link Optional}.
+     * @throws RepositoryException if there is an error while fetching the workspace by ID from the database.
+     */
     @Override
     public Optional<Workspace> getById(Long id) {
         String sql = "SELECT workspace_id, type, price FROM workspace WHERE workspace_id = ?";
@@ -92,11 +119,18 @@ public class JDBCWorkspaceRepositoryImpl implements WorkspaceRepository {
             }
             INTERNAL_LOGGER.warn("Workspace with ID {} not found", id);
         } catch (SQLException e) {
-            INTERNAL_LOGGER.error(ErrorCodes.DATABASE_ERROR.getCode(), "Error fetching workspace by ID! \nDetails={}", e.getMessage(), e);
+            INTERNAL_LOGGER.error(RepositoryErrorCodes.DATA_RETRIEVAL_ERROR.getCode(), "Error fetching workspace with ID: {}! \nDetails={}", id, e.getMessage(), e);
+            throw new RepositoryException(RepositoryErrorCodes.DATA_RETRIEVAL_ERROR, "Failed to retrieve workspaces by ID. \n" + e);
         }
         return Optional.empty();
     }
 
+    /**
+     * Removes a workspace from the database by its ID.
+     *
+     * @param id The ID of the workspace to be removed.
+     * @throws RepositoryException if there is an error while removing the workspace from the database.
+     */
     @Override
     public void remove(Long id) {
         String sql = "DELETE FROM workspace WHERE workspace_id = ?";
@@ -113,7 +147,13 @@ public class JDBCWorkspaceRepositoryImpl implements WorkspaceRepository {
                 INTERNAL_LOGGER.warn("No workspace found to delete with ID {}", id);
             }
         } catch (SQLException e) {
-            INTERNAL_LOGGER.error(ErrorCodes.DATABASE_ERROR.getCode(), "Error deleting workspace! \nDetails={}", e.getMessage(), e);
+            INTERNAL_LOGGER.error(RepositoryErrorCodes.DATA_REMOVAL_ERROR.getCode(), "Error deleting workspace with ID: {}! \nDetails={}", id, e.getMessage(), e);
+            throw new RepositoryException(RepositoryErrorCodes.DATA_REMOVAL_ERROR, "Failed to remove workspace. \n" + e);
         }
+    }
+
+    @Override
+    public Workspace getWorkspaceWithReservations(Long id) {
+        return null;
     }
 }

@@ -27,6 +27,11 @@ dependencies {
     // Encryption
     implementation ("org.mindrot:jbcrypt:0.4")
 
+    // JPA & Hibernate
+    implementation("org.springframework.data:spring-data-jpa:3.4.4")
+    implementation("org.hibernate:hibernate-core:5.6.15.Final")
+
+
 
     // Testing Junit
     testImplementation(platform("org.junit:junit-bom:5.10.0"))

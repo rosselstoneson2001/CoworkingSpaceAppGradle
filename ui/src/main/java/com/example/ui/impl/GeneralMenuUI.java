@@ -1,13 +1,13 @@
 package com.example.ui.impl;
 
 
-import com.example.exceptions.enums.ErrorCodes;
+import com.example.exceptions.enums.ValidationErrorCodes;
 import com.example.repositories.ReservationRepository;
 import com.example.repositories.UserRepository;
 import com.example.repositories.WorkspaceRepository;
-import com.example.repositories.impl.jdbc.JDBCReservationRepositoryImpl;
-import com.example.repositories.impl.jdbc.JDBCUserRepositoryImpl;
-import com.example.repositories.impl.jdbc.JDBCWorkspaceRepositoryImpl;
+import com.example.repositories.impl.jpa.JPAReservationRepositoryImpl;
+import com.example.repositories.impl.jpa.JPAUserRepositoryImpl;
+import com.example.repositories.impl.jpa.JPAWorkspaceRepositoryImpl;
 import com.example.services.ReservationService;
 import com.example.services.UserService;
 import com.example.services.WorkspaceService;
@@ -29,9 +29,9 @@ public class GeneralMenuUI {
     public void generalMenu() {
 
         // Create repository instances
-        ReservationRepository reservationRepository = new JDBCReservationRepositoryImpl();
-        WorkspaceRepository workspaceRepository = new JDBCWorkspaceRepositoryImpl();
-        UserRepository userRepository = new JDBCUserRepositoryImpl();
+        ReservationRepository reservationRepository = new JPAReservationRepositoryImpl();
+        WorkspaceRepository workspaceRepository = new JPAWorkspaceRepositoryImpl();
+        UserRepository userRepository = new JPAUserRepositoryImpl();
 
         // Create service instances
         WorkspaceService workspaceService = new WorkspaceServiceImpl(workspaceRepository);
@@ -42,10 +42,6 @@ public class GeneralMenuUI {
         CustomerUI customerUI = new CustomerUI(workspaceService, reservationService);
         AdminUI adminUI = new AdminUI(workspaceService, reservationService);
         UserUI userUI = new UserUI(userService);
-
-        // Initialize jsonDataStorage
-//        workspaceRepository.load();
-//        reservationRepository.load();
 
         Scanner sc = new Scanner(System.in);
 
@@ -62,15 +58,13 @@ public class GeneralMenuUI {
                     case 3 -> userUI.showMenu();
                     case 4 -> {
                         USER_LOGGER.info("Exiting application.");
-//                        reservationService.save();
-//                        workspaceService.save();
                         return;
                     }
-                    default -> USER_LOGGER.error(ConstantMessages.getUserMessage(ErrorCodes.INVALID_CHOICE));
+                    default -> USER_LOGGER.error(ConstantMessages.getValidationUserMessage(ValidationErrorCodes.INVALID_CHOICE));
                 }
             } catch (InputMismatchException e) {
-                USER_LOGGER.error(ConstantMessages.getUserMessage(ErrorCodes.INVALID_INPUT));
-                INTERNAL_LOGGER.error("[{}] - {}", ErrorCodes.INVALID_INPUT.getCode(), "Input was not a valid number.");
+                USER_LOGGER.error(ConstantMessages.getValidationUserMessage(ValidationErrorCodes.INVALID_INPUT));
+                INTERNAL_LOGGER.error("[{}] - {}", ValidationErrorCodes.INVALID_INPUT.getCode(), "Input was not a valid number.");
                 sc.nextLine(); // Clear invalid input
             }
         }
