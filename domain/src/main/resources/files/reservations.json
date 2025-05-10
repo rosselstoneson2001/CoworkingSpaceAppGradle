@@ -1,0 +1,50 @@
+[ {
+  "reservationId" : 2,
+  "workspaceId" : 1,
+  "customerName" : "2025-01-01",
+  "startDateTime" : [ 2026, 1, 1, 14, 5, 29, 799586300 ],
+  "endDateTime" : [ 2026, 2, 2, 14, 5, 29, 799586300 ],
+  "reservationCreatedAt" : [ 2025, 3, 3, 2, 15, 35, 871672300 ]
+}, {
+  "reservationId" : 3,
+  "workspaceId" : 5,
+  "customerName" : "Kamil",
+  "startDateTime" : [ 2025, 1, 1, 14, 5, 29, 799586300 ],
+  "endDateTime" : [ 2026, 2, 4, 14, 5, 29, 799586300 ],
+  "reservationCreatedAt" : [ 2025, 3, 3, 2, 15, 51, 969654400 ]
+}, {
+  "reservationId" : 4,
+  "workspaceId" : 6,
+  "customerName" : "Kamil",
+  "startDateTime" : [ 2025, 1, 1, 14, 5, 29, 799586300 ],
+  "endDateTime" : [ 2026, 1, 2, 14, 5, 29, 799586300 ],
+  "reservationCreatedAt" : [ 2025, 3, 3, 18, 4, 36, 357461000 ]
+}, {
+  "reservationId" : 4,
+  "workspaceId" : 4,
+  "customerName" : "Kamil",
+  "startDateTime" : [ 2024, 2, 2, 14, 5, 29, 799586300 ],
+  "endDateTime" : [ 2024, 2, 2, 14, 5, 29, 799586300 ],
+  "reservationCreatedAt" : [ 2025, 3, 6, 14, 3, 28, 415149100 ]
+}, {
+  "reservationId" : 7,
+  "workspaceId" : 3,
+  "customerName" : "Kamil",
+  "startDateTime" : [ 2025, 3, 6, 16, 6, 50 ],
+  "endDateTime" : [ 2027, 3, 6, 16, 6, 50 ],
+  "reservationCreatedAt" : [ 2025, 3, 6, 16, 7, 1, 858093900 ]
+}, {
+  "reservationId" : -7674092322819376792,
+  "workspaceId" : -8746593631363667591,
+  "customerName" : "Kamil",
+  "startDateTime" : [ 2025, 3, 9, 14, 37, 24 ],
+  "endDateTime" : [ 2026, 3, 9, 14, 37, 24 ],
+  "reservationCreatedAt" : [ 2025, 3, 9, 14, 37, 31, 867062500 ]
+}, {
+  "reservationId" : -8736409047591574447,
+  "workspaceId" : -6054292238438015594,
+  "customerName" : "Kamil",
+  "startDateTime" : [ 2025, 3, 12, 19, 55, 34 ],
+  "endDateTime" : [ 2026, 3, 12, 19, 55, 34 ],
+  "reservationCreatedAt" : [ 2025, 3, 12, 19, 55, 45, 68993200 ]
+} ]

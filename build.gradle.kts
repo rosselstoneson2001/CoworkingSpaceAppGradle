@@ -1,58 +1,50 @@
 plugins {
     id("java")
-    id("application")
-    id("io.spring.dependency-management") version "1.1.7"
+    id("application") // Apply the application plugin if your project has an entry point
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
-val springBootVersion = "3.2.4"
-
-group = "com.example"
+group = "com.example" // Change this to your project group
 version = "1.0-SNAPSHOT"
 
-subprojects {
-    apply(plugin = "io.spring.dependency-management")
-    apply(plugin = "java")
-
-    java {
-        toolchain {
-            languageVersion.set(JavaLanguageVersion.of(17))
-        }
-    }
-
-    dependencyManagement {
-        imports {
-            mavenBom("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
-        }
-    }
+repositories {
+    mavenCentral() // Set Maven Central as a repository to resolve dependencies
 }
 
-allprojects {
-    repositories {
-        mavenCentral()
-    }
+dependencies {
 
-    dependencies {
+    implementation(project(":ui"))
+    implementation(project(":domain"))
+    implementation(project(":services"))
 
-        // SLF4J API (Interface for logging) || Log4j2 SLF4J Binding (to use SLF4J with Log4j2 as the backend)
-        implementation("org.slf4j:slf4j-api:2.0.9")
-        implementation("org.apache.logging.log4j:log4j-api:2.20.0")
-        implementation("org.apache.logging.log4j:log4j-core:2.20.0")
-        implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0")
-
-        // Exclude conflict dependencies
-        configurations.all {
-            exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
-        }
-
-    }
-
-    tasks.withType<JavaCompile> {
-        options.compilerArgs.add("-parameters")
-    }
-
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 application {
-    mainClass.set("com.example.api.CoSpaceApp")
+    // Correct fully qualified name of the main class
+    mainClass.set("com.example.UIMain") // Adjust the package path accordingly
 }
 
+tasks.named<JavaExec>("run") {
+    standardInput = System.`in`
+}
+
+
+tasks.register<JavaExec>("runInteractive") {
+    group = "application"
+    mainClass.set("com.example.UIMain")
+    classpath = sourceSets.main.get().runtimeClasspath
+    standardInput = System.`in`
+}
+
+tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+    archiveClassifier.set("")
+    manifest {
+        attributes["Main-Class"] = "com.example.UIMain"
+    }
+}
+
+tasks.test {
+    useJUnitPlatform() // Use JUnit platform to run tests
+}
