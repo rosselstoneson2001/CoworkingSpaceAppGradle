@@ -211,8 +211,4 @@ public class GlobalExceptionHandler {
         INTERNAL_LOGGER.error("General Error: \nMessage: {} \nDetails: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-
 }
-
-

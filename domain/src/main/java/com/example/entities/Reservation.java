@@ -1,12 +1,20 @@
 package com.example.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity(name = "reservation")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Reservation {
 
     @Id
@@ -34,50 +42,6 @@ public class Reservation {
 
     @Column(name = "is_active")
     private boolean isActive = true;
-
-    public Reservation(Workspace workspace,
-                       String customerName,
-                       LocalDateTime startDateTime,
-                       LocalDateTime endDateTime,
-                       LocalDateTime reservationCreatedAt) {
-        this.workspace = workspace;
-        this.customerName = customerName;
-        this.startDateTime = startDateTime;
-        this.endDateTime = endDateTime;
-        this.reservationCreatedAt = reservationCreatedAt;
-    }
-
-    public Reservation(Long reservationId,
-                       Workspace workspace,
-                       String customerName,
-                       LocalDateTime startDateTime,
-                       LocalDateTime endDateTime,
-                       LocalDateTime reservationCreatedAt) {
-        this.reservationId = reservationId;
-        this.workspace = workspace;
-        this.customerName = customerName;
-        this.startDateTime = startDateTime;
-        this.endDateTime = endDateTime;
-        this.reservationCreatedAt = reservationCreatedAt;
-    }
-
-    public Reservation() {} // For JSON Deserialization
-
-    public Long getReservationId() { return reservationId; }
-    public Workspace getWorkspace() { return workspace; }
-    public String getCustomerName() { return customerName; }
-    public LocalDateTime getStartDateTime() { return startDateTime; }
-    public LocalDateTime getEndDateTime() { return endDateTime; }
-    public LocalDateTime getReservationCreatedAt() { return reservationCreatedAt; }
-    public boolean isActive() { return isActive; }
-
-    public void setWorkspace(Workspace workspaceId) { this.workspace = workspaceId; }
-    public void setReservationId(Long reservationId) { this.reservationId = reservationId; }
-    public void setCustomerName(String customerName) { this.customerName = customerName; }
-    public void setStartDateTime(LocalDateTime startDateTime) { this.startDateTime = startDateTime; }
-    public void setEndDateTime(LocalDateTime endDateTime) { this.endDateTime = endDateTime; }
-    public void setReservationCreatedAt(LocalDateTime reservationCreatedAt) { this.reservationCreatedAt = reservationCreatedAt; }
-    public void setActive(boolean isActive) { this.isActive = isActive; }
 
     @Override
     public String toString() {

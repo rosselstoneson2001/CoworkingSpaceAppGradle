@@ -1,15 +1,16 @@
 plugins {
     id("java")
-    id("application") // Apply the application plugin if your project has an entry point
+    id("application")
     id("com.github.johnrengelman.shadow") version "8.1.1"
-
+    id("org.springframework.boot") version "3.2.4"
+    id("io.spring.dependency-management") version "1.1.4"
 }
 
-group = "com.example" // Change this to your project group
+group = "com.example"
 version = "1.0-SNAPSHOT"
 
 repositories {
-    mavenCentral() // Set Maven Central as a repository to resolve dependencies
+    mavenCentral()
 }
 
 dependencies {
@@ -23,29 +24,22 @@ dependencies {
 }
 
 application {
-    // Correct fully qualified name of the main class
-    mainClass.set("com.example.UIMain") // Adjust the package path accordingly
-}
-
-tasks.named<JavaExec>("run") {
-    standardInput = System.`in`
-}
-
-
-tasks.register<JavaExec>("runInteractive") {
-    group = "application"
     mainClass.set("com.example.UIMain")
-    classpath = sourceSets.main.get().runtimeClasspath
-    standardInput = System.`in`
 }
 
-tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-    archiveClassifier.set("")
-    manifest {
-        attributes["Main-Class"] = "com.example.UIMain"
+subprojects {
+    apply(plugin = "org.springframework.boot")
+    apply(plugin = "io.spring.dependency-management")
     }
-}
 
-tasks.test {
-    useJUnitPlatform() // Use JUnit platform to run tests
-}
+    tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+        archiveClassifier.set("")
+        manifest {
+            attributes["Main-Class"] = "com.example.UIMain"
+        }
+    }
+
+    tasks.test {
+        useJUnitPlatform() // Use JUnit platform to run tests
+    }
+

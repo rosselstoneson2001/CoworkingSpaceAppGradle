@@ -29,7 +29,7 @@ public class WorkspaceServiceTest {
     void shouldCreateWorkspaceSuccessfully() {
         Workspace workspace = new Workspace(new BigDecimal("100.0"), "Office");
 
-        workspaceService.create(workspace);
+        workspaceService.save(workspace);
 
         verify(workspaceRepository).add(workspace);
     }
@@ -42,7 +42,7 @@ public class WorkspaceServiceTest {
 
         when(workspaceRepository.getAll()).thenReturn(workspaces);
 
-        List<Workspace> result = workspaceService.getAll();
+        List<Workspace> result = workspaceService.findAll();
 
         assertEquals(workspaces, result);
     }
@@ -52,7 +52,7 @@ public class WorkspaceServiceTest {
         Workspace workspace = new Workspace(new BigDecimal("100.0"), "Office");
         when(workspaceRepository.getById(1L)).thenReturn(Optional.of(workspace));
 
-        Optional<Workspace> result = workspaceService.getById(1L);
+        Optional<Workspace> result = workspaceService.findById(1L);
 
         assertTrue(result.isPresent());
         assertEquals(workspace, result.get());
@@ -60,7 +60,7 @@ public class WorkspaceServiceTest {
 
     @Test
     void shouldRemoveWorkspaceById() {
-        workspaceService.remove(1L);
+        workspaceService.deleteById(1L);
 
         verify(workspaceRepository).remove(1L);
     }
@@ -70,7 +70,7 @@ public class WorkspaceServiceTest {
     @Test
     void shouldThrowInvalidWorkspaceExceptionWhenWorkspaceIsNull() {
         InvalidWorkspaceException thrown = assertThrows(InvalidWorkspaceException.class,
-                () -> workspaceService.create(null));
+                () -> workspaceService.save(null));
 
         assertEquals("Workspace object cannot be null.", thrown.getMessage());
     }
@@ -80,7 +80,7 @@ public class WorkspaceServiceTest {
         Workspace workspace = new Workspace(new BigDecimal("123.32"), null);
 
         InvalidWorkspaceException thrown = assertThrows(InvalidWorkspaceException.class,
-                () -> workspaceService.create(workspace));
+                () -> workspaceService.save(workspace));
 
         assertEquals("Workspace type is required.", thrown.getMessage());
     }
@@ -90,7 +90,7 @@ public class WorkspaceServiceTest {
         Workspace workspace = new Workspace(null, "Office");
 
         InvalidWorkspaceException thrown = assertThrows(InvalidWorkspaceException.class,
-                () -> workspaceService.create(workspace));
+                () -> workspaceService.save(workspace));
 
         assertEquals("Workspace price is required.", thrown.getMessage());
     }
@@ -102,7 +102,7 @@ public class WorkspaceServiceTest {
         doThrow(new InvalidWorkspaceException(ValidationErrorCodes.INVALID_DATE, "Invalid data")).when(workspaceRepository).add(any());
 
         InvalidWorkspaceException thrown = assertThrows(InvalidWorkspaceException.class,
-                () -> workspaceService.create(workspace));
+                () -> workspaceService.save(workspace));
 
         assertEquals("Invalid data", thrown.getMessage());
     }

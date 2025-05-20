@@ -11,8 +11,8 @@ import com.example.utils.PasswordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(@Qualifier("jpaUser") UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -38,13 +38,15 @@ public class UserServiceImpl implements UserService {
      * @param user the user to create.
      * @throws InvalidUserException if any required field is missing.
      */
+    @Transactional
     @Override
-    public void create(User user) {
+    public void save(User user) {
         if (user.getFirstName() == null || user.getLastName() == null || user.getEmail() == null || user.getPassword() == null) {
             throw new InvalidUserException(ValidationErrorCodes.MISSING_FIELD, "All user fields are required.");
         }
 
-        userRepository.add(user);
+        PasswordUtils.hashPassword(user.getPassword());
+        userRepository.save(user);
         INTERNAL_LOGGER.info("User with email {} created successfully.", user.getEmail());
     }
 
@@ -54,9 +56,10 @@ public class UserServiceImpl implements UserService {
      * @return a list of all users.
      * @throws UserNotFoundException if no users are found.
      */
+    @Transactional(readOnly = true)
     @Override
-    public List<User> getAll() {
-        List<User> users = userRepository.getAll();
+    public List<User> findAll() {
+        List<User> users = userRepository.findAll();
         if (users.isEmpty()) {
             throw new UserNotFoundException(NotFoundErrorCodes.USER_NOT_FOUND, "Failed to retrieve all users. No users found in the system.");
         } else {
@@ -71,9 +74,10 @@ public class UserServiceImpl implements UserService {
      * @return an {@link Optional} containing the user if found.
      * @throws UserNotFoundException if no user is found with the given ID.
      */
+    @Transactional(readOnly = true)
     @Override
-    public Optional<User> getById(Long userId) {
-        Optional<User> user = userRepository.getById(userId);
+    public Optional<User> findById(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new UserNotFoundException(NotFoundErrorCodes.USER_NOT_FOUND, "No user found with ID: " + userId);
         }
@@ -86,10 +90,11 @@ public class UserServiceImpl implements UserService {
      * @param userId the ID of the user to remove.
      * @throws UserNotFoundException if the user does not exist.
      */
+    @Transactional
     @Override
-    public void remove(Long userId) {
-        if (getById(userId).isPresent()) {
-            userRepository.remove(userId);
+    public void deleteById(Long userId) {
+        if (findById(userId).isPresent()) {
+            userRepository.deleteById(userId);
             INTERNAL_LOGGER.info("User with ID {} removed successfully.", userId);
         } else {
             throw new UserNotFoundException(NotFoundErrorCodes.USER_NOT_FOUND, "Failed to delete user. No user found with ID: " + userId);
@@ -104,9 +109,10 @@ public class UserServiceImpl implements UserService {
      * @return {@code true} if the password matches; otherwise, {@code false}.
      * @throws UserNotFoundException if no user is found with the given ID.
      */
+    @Transactional
     @Override
     public boolean checkPassword(Long userId, String plainPassword) {
-        Optional<User> user = userRepository.getById(userId);
+        Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new UserNotFoundException(NotFoundErrorCodes.USER_NOT_FOUND, "Failed to check password. User not found with ID: " + userId);
         }

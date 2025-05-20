@@ -1,5 +1,8 @@
 package com.example.ui.controllers;
 
+import com.example.converters.UserConverter;
+import com.example.dto.requests.UserRequestDTO;
+import com.example.dto.responses.UserResponseDTO;
 import com.example.entities.User;
 import com.example.services.UserService;
 import org.springframework.http.HttpStatus;
@@ -39,9 +42,10 @@ public class UserController {
      * @return List of users.
      */
     @GetMapping("/get-all")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAll();
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        List<User> users = userService.findAll();
+        List<UserResponseDTO> userResponseDTOS = UserConverter.toDTO(users);
+        return ResponseEntity.ok(userResponseDTOS);
     }
 
     /**
@@ -50,21 +54,23 @@ public class UserController {
      * @return User if found, 404 otherwise.
      */
     @GetMapping("/get/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
-        Optional<User> user = userService.getById(id);
-        return user.map(ResponseEntity::ok)
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable("id") Long id) {
+        Optional<User> user = userService.findById(id);
+        return user
+                .map(u -> ResponseEntity.ok(UserConverter.toDTO(u)))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     /**
      * Create a new user.
-     * @param user User details.
+     * @param request User details.
      * @return Created user with 201 status.
      */
     @PostMapping("/create")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        userService.create(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    public ResponseEntity<UserRequestDTO> createUser(@RequestBody UserRequestDTO request) {
+        User user = UserConverter.toEntity(request);
+        userService.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(request);
     }
 
     /**
@@ -75,7 +81,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         try {
-            userService.remove(id);
+            userService.deleteById(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

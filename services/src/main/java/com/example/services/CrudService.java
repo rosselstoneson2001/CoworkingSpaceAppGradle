@@ -12,9 +12,9 @@ import java.util.Optional;
  */
 public interface CrudService<T, K>  {
 
-    void create(T entity);
-    List<T> getAll();
-    Optional<T> getById(K id);
-    void remove(K id);
+    void save(T entity);
+    List<T> findAll();
+    Optional<T> findById(K id);
+    void deleteById(K id);
 
 }

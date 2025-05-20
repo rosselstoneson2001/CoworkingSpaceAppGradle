@@ -18,23 +18,26 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2")
 
-    // Postgresql and jdbc connection pool
-    implementation("com.zaxxer:HikariCP:5.0.1")
-    implementation("org.postgresql:postgresql:42.7.1")
+    // Spring Boot
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+    // Lombok
+    compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
+
+    // Jakarta Validation
+    implementation("jakarta.validation:jakarta.validation-api:3.1.1")
+
+    // Exclude conflict dependencies
+    configurations.all {
+        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
+        exclude(group = "ch.qos.logback", module = "logback-classic")
+        exclude(group = "org.apache.logging.log4j", module = "log4j-to-slf4j")
+    }
 
     // Encryption
-    implementation ("org.mindrot:jbcrypt:0.4")
-
-    // JPA & Hibernate
-    implementation("org.springframework.data:spring-data-jpa:3.4.4")
-    implementation("org.hibernate:hibernate-core:5.6.15.Final")
-
-    // Spring
-    implementation("org.springframework:spring-core:5.3.30")
-    implementation("org.springframework:spring-context:5.3.30")
-
-    //Spring test
-    testImplementation("org.springframework:spring-test:5.3.30")
+    implementation("org.mindrot:jbcrypt:0.4")
 
     // Testing Junit
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
@@ -45,7 +48,6 @@ dependencies {
     // Testing mockito
     testImplementation("org.mockito:mockito-core:5.16.0")
     testImplementation("org.mockito:mockito-inline:5.2.0")
-
 }
 
 tasks.test {
