@@ -31,7 +31,12 @@ dependencies {
     implementation("org.springframework.data:spring-data-jpa:3.4.4")
     implementation("org.hibernate:hibernate-core:5.6.15.Final")
 
+    // Spring
+    implementation("org.springframework:spring-core:5.3.30")
+    implementation("org.springframework:spring-context:5.3.30")
 
+    //Spring test
+    testImplementation("org.springframework:spring-test:5.3.30")
 
     // Testing Junit
     testImplementation(platform("org.junit:junit-bom:5.10.0"))

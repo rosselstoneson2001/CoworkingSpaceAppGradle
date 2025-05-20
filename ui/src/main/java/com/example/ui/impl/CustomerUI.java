@@ -14,12 +14,14 @@ import com.example.utils.ConstantMessages;
 import com.example.utils.InputHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.InputMismatchException;
 import java.util.Optional;
 import java.util.Scanner;
 
+@Component
 public class CustomerUI implements Menu {
 
     private static final Logger USER_LOGGER = LoggerFactory.getLogger("USER_LOGGER");

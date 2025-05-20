@@ -12,11 +12,13 @@ import com.example.utils.ConstantMessages;
 import com.example.utils.InputHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+@Component
 public class AdminUI implements Menu {
 
     private static final Logger USER_LOGGER = LoggerFactory.getLogger("USER_LOGGER");

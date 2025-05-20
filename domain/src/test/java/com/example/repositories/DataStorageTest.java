@@ -1,7 +1,7 @@
 package com.example.repositories;
 
 import com.example.exceptions.RepositoryException;
-import com.example.repositories.impl.json.DataStorageImpl;
+import com.example.repositories.impl.file.DataStorageImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

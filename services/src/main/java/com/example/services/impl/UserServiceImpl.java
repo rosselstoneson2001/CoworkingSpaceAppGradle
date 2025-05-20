@@ -10,6 +10,9 @@ import com.example.services.UserService;
 import com.example.utils.PasswordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,12 +21,14 @@ import java.util.Optional;
  * Provides operations related to user management.
  * Implementation of the {@link UserService} interface.
  */
+@Service
 public class UserServiceImpl implements UserService {
 
     private static final Logger INTERNAL_LOGGER = LoggerFactory.getLogger("INTERNAL_LOGGER");
     private final UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    @Autowired
+    public UserServiceImpl(@Qualifier("jpaUser") UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

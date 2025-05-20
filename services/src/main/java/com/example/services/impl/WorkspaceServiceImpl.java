@@ -8,6 +8,9 @@ import com.example.exceptions.enums.NotFoundErrorCodes;
 import com.example.exceptions.enums.ValidationErrorCodes;
 import com.example.repositories.WorkspaceRepository;
 import com.example.services.WorkspaceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,11 +21,13 @@ import java.util.Optional;
  * retrieving, and removing workspaces, as well as checking workspace availability.
  * Implementation of the {@link WorkspaceService} interface for managing workspace-related operations.
  */
+@Service
 public class WorkspaceServiceImpl implements WorkspaceService {
 
     private final WorkspaceRepository workspaceRepository;
 
-    public WorkspaceServiceImpl(WorkspaceRepository workspaceRepository) {
+    @Autowired
+    public WorkspaceServiceImpl(@Qualifier("jpaWorkspace") WorkspaceRepository workspaceRepository) {
         this.workspaceRepository = workspaceRepository;
     }
 

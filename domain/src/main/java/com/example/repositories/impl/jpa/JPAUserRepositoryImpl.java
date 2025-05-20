@@ -7,6 +7,7 @@ import com.example.exceptions.enums.RepositoryErrorCodes;
 import com.example.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -25,6 +26,7 @@ import java.util.Optional;
  * <p>Logging is performed at each operation to track success, failure, and other relevant information.
  * Exceptions are logged and rethrown as {@link RepositoryException} for handling by higher layers of the application.</p>
  */
+@Repository("jpaUser")
 public class JPAUserRepositoryImpl implements UserRepository {
 
     private static final Logger INTERNAL_LOGGER = LoggerFactory.getLogger("INTERNAL_LOGGER");

@@ -7,6 +7,7 @@ import com.example.exceptions.enums.RepositoryErrorCodes;
 import com.example.repositories.WorkspaceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -21,6 +22,7 @@ import java.util.Optional;
  * Implementation of {@link WorkspaceRepository} using JDBC for interacting with the workspace data in a relational database.
  * Provides methods to perform CRUD operations on workspaces, such as adding, retrieving, updating, and deleting workspaces.
  */
+@Repository("jdbcWorkspace")
 public class JDBCWorkspaceRepositoryImpl implements WorkspaceRepository {
 
     private static final Logger INTERNAL_LOGGER = LoggerFactory.getLogger("INTERNAL_LOGGER");

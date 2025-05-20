@@ -8,6 +8,7 @@ import com.example.exceptions.enums.RepositoryErrorCodes;
 import com.example.repositories.ReservationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -19,6 +20,7 @@ import java.util.Optional;
  * Implementation of {@link ReservationRepository} using JDBC for interacting with the reservation data in a relational database.
  * Provides methods to perform CRUD operations on reservations, such as adding, retrieving, updating, and deleting reservations.
  */
+@Repository("jdbcReservation")
 public class JDBCReservationRepositoryImpl implements ReservationRepository {
 
     private static final Logger INTERNAL_LOGGER = LoggerFactory.getLogger("INTERNAL_LOGGER");

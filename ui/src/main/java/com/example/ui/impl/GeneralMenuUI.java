@@ -2,47 +2,33 @@ package com.example.ui.impl;
 
 
 import com.example.exceptions.enums.ValidationErrorCodes;
-import com.example.repositories.ReservationRepository;
-import com.example.repositories.UserRepository;
-import com.example.repositories.WorkspaceRepository;
-import com.example.repositories.impl.jpa.JPAReservationRepositoryImpl;
-import com.example.repositories.impl.jpa.JPAUserRepositoryImpl;
-import com.example.repositories.impl.jpa.JPAWorkspaceRepositoryImpl;
-import com.example.services.ReservationService;
-import com.example.services.UserService;
-import com.example.services.WorkspaceService;
-import com.example.services.impl.ReservationServiceImpl;
-import com.example.services.impl.UserServiceImpl;
-import com.example.services.impl.WorkspaceServiceImpl;
 import com.example.utils.ConstantMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+@Component
 public class GeneralMenuUI {
 
     private static final Logger USER_LOGGER = LoggerFactory.getLogger("USER_LOGGER");
     private static final Logger INTERNAL_LOGGER = LoggerFactory.getLogger("INTERNAL_LOGGER");
 
+    private final AdminUI adminUI;
+    private final CustomerUI customerUI;
+    private final UserUI userUI;
+
+    public GeneralMenuUI(AdminUI adminUI,
+                         CustomerUI customerUI,
+                         UserUI userUI) {
+        this.adminUI = adminUI;
+        this.customerUI = customerUI;
+        this.userUI = userUI;
+    }
+
     public void generalMenu() {
-
-        // Create repository instances
-        ReservationRepository reservationRepository = new JPAReservationRepositoryImpl();
-        WorkspaceRepository workspaceRepository = new JPAWorkspaceRepositoryImpl();
-        UserRepository userRepository = new JPAUserRepositoryImpl();
-
-        // Create service instances
-        WorkspaceService workspaceService = new WorkspaceServiceImpl(workspaceRepository);
-        ReservationService reservationService = new ReservationServiceImpl(reservationRepository, workspaceService);
-        UserService userService = new UserServiceImpl(userRepository);
-
-        // Create Customer UI and Admin UI
-        CustomerUI customerUI = new CustomerUI(workspaceService, reservationService);
-        AdminUI adminUI = new AdminUI(workspaceService, reservationService);
-        UserUI userUI = new UserUI(userService);
-
         Scanner sc = new Scanner(System.in);
 
         while (true) {
@@ -60,7 +46,8 @@ public class GeneralMenuUI {
                         USER_LOGGER.info("Exiting application.");
                         return;
                     }
-                    default -> USER_LOGGER.error(ConstantMessages.getValidationUserMessage(ValidationErrorCodes.INVALID_CHOICE));
+                    default ->
+                            USER_LOGGER.error(ConstantMessages.getValidationUserMessage(ValidationErrorCodes.INVALID_CHOICE));
                 }
             } catch (InputMismatchException e) {
                 USER_LOGGER.error(ConstantMessages.getValidationUserMessage(ValidationErrorCodes.INVALID_INPUT));
