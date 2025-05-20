@@ -13,6 +13,9 @@ import com.example.services.ReservationService;
 import com.example.services.WorkspaceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,13 +27,15 @@ import java.util.Optional;
  * retrieving, and removing reservations, as well as checking workspace availability.
  * Implementation of the {@link ReservationService} interface for managing workspace-related operations.
  */
+@Service
 public class ReservationServiceImpl implements ReservationService {
 
     private static final Logger INTERNAL_LOGGER = LoggerFactory.getLogger("INTERNAL_LOGGER");
     private final ReservationRepository reservationRepository;
     private final WorkspaceService workspaceService;
 
-    public ReservationServiceImpl(ReservationRepository reservationRepository, WorkspaceService workspaceService) {
+    @Autowired
+    public ReservationServiceImpl(@Qualifier("jpaReservation") ReservationRepository reservationRepository, WorkspaceService workspaceService) {
         this.reservationRepository = reservationRepository;
         this.workspaceService = workspaceService;
     }

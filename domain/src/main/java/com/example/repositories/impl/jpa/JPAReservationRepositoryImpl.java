@@ -4,9 +4,10 @@ import com.example.entities.Reservation;
 import com.example.exceptions.RepositoryException;
 import com.example.exceptions.enums.RepositoryErrorCodes;
 import com.example.repositories.ReservationRepository;
-import com.example.repositories.impl.json.ReservationRepositoryImpl;
+import com.example.repositories.impl.file.ReservationRepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -24,6 +25,7 @@ import java.util.Optional;
  * including queries filtered by customer and workspace.
  * </p>
  */
+@Repository("jpaReservation")
 public class JPAReservationRepositoryImpl implements ReservationRepository {
 
     private static final Logger INTERNAL_LOGGER = LoggerFactory.getLogger(ReservationRepositoryImpl.class);

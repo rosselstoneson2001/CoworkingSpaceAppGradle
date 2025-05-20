@@ -10,10 +10,12 @@ import com.example.utils.ConstantMessages;
 import com.example.utils.InputHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Scanner;
 
+@Component
 public class UserUI implements Menu {
 
     private static final Logger USER_LOGGER = LoggerFactory.getLogger("USER_LOGGER");

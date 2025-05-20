@@ -9,6 +9,7 @@ import com.example.repositories.UserRepository;
 import com.example.utils.PasswordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -23,6 +24,7 @@ import java.util.Optional;
  * Implementation of {@link UserRepository} using JDBC for interacting with the user data in a relational database.
  * Provides methods to perform CRUD operations on users, such as adding, retrieving, updating, and deleting users.
  */
+@Repository("jdbcUser")
 public class JDBCUserRepositoryImpl implements UserRepository {
 
     private static final Logger INTERNAL_LOGGER = LoggerFactory.getLogger("INTERNAL_LOGGER");

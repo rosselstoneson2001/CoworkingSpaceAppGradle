@@ -9,6 +9,7 @@ import com.example.exceptions.enums.RepositoryErrorCodes;
 import com.example.repositories.WorkspaceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.Optional;
  * <p>Logging is performed at each operation to track success, failure, and other relevant information.
  * Exceptions are logged and rethrown as {@link RepositoryException} or {@link WorkspaceNotFoundException} for handling by higher layers of the application.</p>
  */
+@Repository("jpaWorkspace")
 public class JPAWorkspaceRepositoryImpl implements WorkspaceRepository {
 
     private static final Logger INTERNAL_LOGGER = LoggerFactory.getLogger("INTERNAL_LOGGER");
@@ -137,13 +139,12 @@ public class JPAWorkspaceRepositoryImpl implements WorkspaceRepository {
     @Override
     public Workspace getWorkspaceWithReservations(Long id) {
         try {
-            Workspace workspace = entityManager.createQuery(
+
+            return entityManager.createQuery(
                             "SELECT DISTINCT w FROM Workspace w LEFT JOIN FETCH w.reservations r " +
-                                    "WHERE w.id = :id AND w.isActive = true AND r.isActive = true", Workspace.class)
+                                    "WHERE w.id = :id AND w.isActive = true AND r.isActive = true OR r IS NULL", Workspace.class)
                     .setParameter("id", id)
                     .getSingleResult();
-
-            return workspace;
         } catch (NoResultException e) {
             INTERNAL_LOGGER.warn("No workspace found with ID: {}", id);
             throw new WorkspaceNotFoundException(NotFoundErrorCodes.WORKSPACE_NOT_FOUND, "No active workspace found with ID:  \n Details: {}" + id);
