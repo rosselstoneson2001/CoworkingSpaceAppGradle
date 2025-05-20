@@ -5,6 +5,7 @@ import com.example.exceptions.RepositoryException;
 import com.example.exceptions.enums.NotFoundErrorCodes;
 import com.example.exceptions.enums.RepositoryErrorCodes;
 import com.example.repositories.UserRepository;
+import com.example.utils.PasswordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -51,8 +52,10 @@ public class JPAUserRepositoryImpl implements UserRepository {
     public void add(User entity) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
-            transaction.begin();
 
+            transaction.begin();
+            String hashedPassword = PasswordUtils.hashPassword(entity.getPassword());
+            entity.setPassword(hashedPassword);
             entityManager.persist(entity);
 
             transaction.commit();
@@ -126,7 +129,7 @@ public class JPAUserRepositoryImpl implements UserRepository {
                 transaction.rollback();
             }
             INTERNAL_LOGGER.error(RepositoryErrorCodes.DATA_RETRIEVAL_ERROR.getCode(), "Error occurred while retrieving user by ID: {}", id, e);
-            throw new RepositoryException(RepositoryErrorCodes.DATA_RETRIEVAL_ERROR, "Failed to retrieve user by ID: \n" + e);
+            throw new RepositoryException(RepositoryErrorCodes.DATA_RETRIEVAL_ERROR, "Failed to retrieve user by ID: " + e);
         }
         return user;
     }

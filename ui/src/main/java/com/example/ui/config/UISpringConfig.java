@@ -4,6 +4,7 @@ import com.example.services.config.ServiceSpringConfig;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * Configuration class for scanning and registering Spring components
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Import;
  * </p>
  */
 @Configuration
+@EnableWebMvc
 @ComponentScan(basePackages = "com.example")
 @Import(ServiceSpringConfig.class)
 public class UISpringConfig {

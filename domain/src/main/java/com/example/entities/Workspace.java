@@ -20,7 +20,7 @@ public class Workspace {
     private BigDecimal price;
 
     @Column(name = "is_active")
-    private boolean isActive;
+    private boolean isActive = true;
 
     @OneToMany(mappedBy = "workspace", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Reservation> reservations = new ArrayList<>();
@@ -30,7 +30,6 @@ public class Workspace {
                      String type) {
         this.price = price;
         this.type = type;
-        this.isActive = true;
     }
 
     public Workspace(Long workspaceId,
@@ -39,7 +38,6 @@ public class Workspace {
         this.workspaceId = workspaceId;
         this.price = price;
         this.type = type;
-        this.isActive = true;
     }
 
     public Workspace() {} // For JSON Deserialization

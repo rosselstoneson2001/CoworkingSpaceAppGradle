@@ -13,8 +13,6 @@ dependencies {
 
     // SLF4J API (Interface for logging) || Log4j2 SLF4J Binding (to use SLF4J with Log4j2 as the backend)
     implementation("org.slf4j:slf4j-api:2.0.9")
-    implementation("org.apache.logging.log4j:log4j-core:2.20.0")
-    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0")
 
     // Jackson Databind for JSON serialization/deserialization
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")

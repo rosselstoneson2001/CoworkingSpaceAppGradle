@@ -9,7 +9,6 @@ import com.example.repositories.WorkspaceRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,11 +29,11 @@ public class ReservationServiceTest {
 
     @BeforeEach
     void setUp() {
-        reservation = new Reservation(1L, "John Doe",
-                LocalDateTime.now().plusDays(1),
-                LocalDateTime.now().plusDays(2),
-                LocalDateTime.now());
-        workspace = new Workspace();
+//        reservation = new Reservation(1L, "John Doe",
+//                LocalDateTime.now().plusDays(1),
+//                LocalDateTime.now().plusDays(2),
+//                LocalDateTime.now());
+//        workspace = new Workspace();
 
         workspaceRepository = mock(WorkspaceRepository.class);
         workspaceService = new WorkspaceServiceImpl(workspaceRepository);

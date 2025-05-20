@@ -20,7 +20,7 @@ public enum NotFoundErrorCodes {
 
     }
 
-    public String getCode() {
+    public String getCode()  {
         return code;
     }
 }
