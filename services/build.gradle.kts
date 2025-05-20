@@ -12,8 +12,10 @@ repositories {
 
 dependencies {
 
-    implementation("org.slf4j:slf4j-api:2.0.9")
     implementation(project(":domain"))
+
+    // Logger
+    implementation("org.slf4j:slf4j-api:2.0.9")
 
     // Spring
     implementation("org.springframework:spring-core:5.3.30")

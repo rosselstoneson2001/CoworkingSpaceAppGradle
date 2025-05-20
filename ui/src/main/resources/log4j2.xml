@@ -2,7 +2,7 @@
 <Configuration status="WARN">
     <Appenders>
         <!-- File appender for technical logs -->
-        <File name="TechLog" fileName="logs/tech.log" append="true">
+        <File name="TechLog" fileName="C:\Users\ASUS\Desktop\CoSpaceApp\logs\tech.log" append="true">
             <PatternLayout>
                 <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</Pattern>
             </PatternLayout>
@@ -16,7 +16,7 @@
         </Console>
 
         <!-- SQL Query Logs (Separate File for SQL queries) -->
-        <File name="SQLLog" fileName="logs/sql.log" append="true">
+        <File name="SQLLog" fileName="C:\Users\ASUS\Desktop\CoSpaceApp\logs\sql.log" append="true">
             <PatternLayout>
                 <Pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</Pattern>
             </PatternLayout>

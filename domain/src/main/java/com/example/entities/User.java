@@ -23,7 +23,7 @@ public class User {
     private String password;
 
     @Column(name = "is_active")
-    private boolean isActive;
+    private boolean isActive = true;
 
     public User(String firstName,
                 String lastName,
@@ -33,7 +33,6 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.isActive = true;
     }
 
     public User(Long userId,
@@ -46,8 +45,9 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.isActive = true;
     }
+
+    public User() {}
 
     public void setUserId(Long userId) { this.userId = userId; }
     public void setFirstName(String firstName) { this.firstName = firstName; }

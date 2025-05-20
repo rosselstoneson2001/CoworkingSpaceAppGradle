@@ -2,6 +2,7 @@ plugins {
     id("java")
     id("application") // Apply the application plugin if your project has an entry point
     id("com.github.johnrengelman.shadow") version "8.1.1"
+
 }
 
 group = "com.example" // Change this to your project group

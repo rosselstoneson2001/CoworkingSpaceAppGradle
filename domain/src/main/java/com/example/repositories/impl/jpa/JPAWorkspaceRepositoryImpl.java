@@ -117,7 +117,7 @@ public class JPAWorkspaceRepositoryImpl implements WorkspaceRepository {
                 transaction.rollback();
             }
             INTERNAL_LOGGER.error(RepositoryErrorCodes.DATA_RETRIEVAL_ERROR.getCode(), "Error occurred while retrieving workspace by ID: {}", id, e);
-            throw new RepositoryException(RepositoryErrorCodes.DATA_RETRIEVAL_ERROR, "Failed to retrieve workspace by ID: \n" + e);
+            throw new RepositoryException(RepositoryErrorCodes.DATA_RETRIEVAL_ERROR, "Failed to retrieve workspace by ID: " + e);
         }
         return workspace;
     }
@@ -142,7 +142,7 @@ public class JPAWorkspaceRepositoryImpl implements WorkspaceRepository {
 
             return entityManager.createQuery(
                             "SELECT DISTINCT w FROM Workspace w LEFT JOIN FETCH w.reservations r " +
-                                    "WHERE w.id = :id AND w.isActive = true AND r.isActive = true OR r IS NULL", Workspace.class)
+                                    "WHERE w.id = :id AND w.isActive = true AND (r.isActive = true OR r IS NULL)", Workspace.class)
                     .setParameter("id", id)
                     .getSingleResult();
         } catch (NoResultException e) {
