@@ -44,47 +44,44 @@ public class ReservationServiceTest {
 
     @Test
     void shouldCreateReservationSuccessfully() {
-        when(workspaceService.getById(any())).thenReturn(Optional.of(workspace));
+        when(workspaceService.findById(any())).thenReturn(Optional.of(workspace));
         when(reservationRepository.findReservationsByWorkspace(any())).thenReturn(List.of());
 
-        assertDoesNotThrow(() -> reservationService.create(reservation));
+        assertDoesNotThrow(() -> reservationService.save(reservation));
 
-        verify(reservationRepository, times(1)).add(reservation);
+        verify(reservationRepository, times(1)).save(reservation);
     }
 
     @Test
     void shouldReturnAllReservations() {
         List<Reservation> reservations = List.of(reservation);
-        when(reservationRepository.getAll()).thenReturn(reservations);
+        when(reservationRepository.findAll()).thenReturn(reservations);
 
-        assertEquals(reservations, reservationService.getAll());
+        assertEquals(reservations, reservationService.findAll());
     }
 
     @Test
     void shouldFindReservationById() {
-        when(reservationRepository.getById(any())).thenReturn(Optional.of(reservation));
+        when(reservationRepository.getById(any())).thenReturn(reservation);
 
-        assertEquals(Optional.of(reservation), reservationService.getById(1L));
+        assertEquals(Optional.of(reservation), reservationService.findById(1L));
     }
 
     @Test
     void shouldRemoveReservation() {
-        doNothing().when(reservationRepository).remove(any());
+        doNothing().when(reservationRepository).deleteById(any());
 
-        assertDoesNotThrow(() -> reservationService.remove(1L));
-        verify(reservationRepository, times(1)).remove(1L);
+        assertDoesNotThrow(() -> reservationService.deleteById(1L));
+        verify(reservationRepository, times(1)).deleteById(1L);
     }
 
     // Exceptions testing
 
     @Test
     void shouldThrowExceptionWhenFieldsAreMissing() {
-        Reservation invalidReservation = new Reservation(null, null,
-                null,
-                null,
-                null);
+        Reservation invalidReservation = new Reservation();
 
-        Exception exception = assertThrows(InvalidReservationException.class, () -> reservationService.create(invalidReservation));
+        Exception exception = assertThrows(InvalidReservationException.class, () -> reservationService.save(invalidReservation));
         assertEquals("All fields are required for booking.", exception.getMessage());
     }
 
@@ -92,24 +89,24 @@ public class ReservationServiceTest {
     void shouldThrowExceptionWhenEndDateBeforeStartDate() {
         reservation.setEndDateTime(reservation.getStartDateTime().minusDays(1));
 
-        Exception exception = assertThrows(InvalidReservationException.class, () -> reservationService.create(reservation));
+        Exception exception = assertThrows(InvalidReservationException.class, () -> reservationService.save(reservation));
         assertEquals("End date cannot be before start date.", exception.getMessage());
     }
 
     @Test
     void shouldThrowExceptionWhenWorkspaceNotFound() {
-        when(workspaceService.getById(any())).thenReturn(Optional.empty());
+        when(workspaceService.findById(any())).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(WorkspaceNotFoundException.class, () -> reservationService.create(reservation));
+        Exception exception = assertThrows(WorkspaceNotFoundException.class, () -> reservationService.save(reservation));
         assertEquals("Workspace with ID 1 not found.", exception.getMessage());
     }
 
     @Test
     void shouldThrowExceptionWhenWorkspaceIsNotAvailable() {
-        when(workspaceService.getById(any())).thenReturn(Optional.of(workspace));
+        when(workspaceService.findById(any())).thenReturn(Optional.of(workspace));
         when(reservationRepository.findReservationsByWorkspace(any())).thenReturn(List.of(reservation));
 
-        Exception exception = assertThrows(InvalidReservationException.class, () -> reservationService.create(reservation));
+        Exception exception = assertThrows(InvalidReservationException.class, () -> reservationService.save(reservation));
         assertEquals("The workspace is not available for the selected dates.", exception.getMessage());
     }
 

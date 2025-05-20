@@ -1,7 +1,14 @@
 package com.example.ui.controllers;
 
+import com.example.converters.ReservationConverter;
+import com.example.dto.requests.ReservationRequestDTO;
+import com.example.dto.responses.ReservationResponseDTO;
 import com.example.entities.Reservation;
+import com.example.entities.Workspace;
+import com.example.exceptions.WorkspaceNotFoundException;
+import com.example.exceptions.enums.NotFoundErrorCodes;
 import com.example.services.ReservationService;
+import com.example.services.WorkspaceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,10 +35,12 @@ import java.util.Optional;
 public class ReservationController {
 
     private final ReservationService reservationService;
+    private final WorkspaceService workspaceService;
 
 
-    public ReservationController(ReservationService reservationService) {
+    public ReservationController(ReservationService reservationService, WorkspaceService workspaceService) {
         this.reservationService = reservationService;
+        this.workspaceService = workspaceService;
     }
 
     /**
@@ -40,9 +49,10 @@ public class ReservationController {
      * @return List of reservations.
      */
     @GetMapping("/get-all")
-    public ResponseEntity<List<Reservation>> getAllReservations() {
-        List<Reservation> reservations = reservationService.getAll();
-        return ResponseEntity.ok(reservations);
+    public ResponseEntity<List<ReservationResponseDTO>> getAllReservations() {
+        List<Reservation> reservations = reservationService.findAll();
+        List<ReservationResponseDTO> reservationResponseDTOS = ReservationConverter.toDTO(reservations);
+        return ResponseEntity.ok(reservationResponseDTOS);
     }
 
     /**
@@ -52,22 +62,30 @@ public class ReservationController {
      * @return Reservation if found, 404 otherwise.
      */
     @GetMapping("/get/{id}")
-    public ResponseEntity<Reservation> getReservationById(@PathVariable("id") Long id) {
-        Optional<Reservation> reservation = reservationService.getById(id);
-        return reservation.map(ResponseEntity::ok)
+    public ResponseEntity<ReservationResponseDTO> getReservationById(@PathVariable("id") Long id) {
+        Optional<Reservation> reservation = reservationService.findById(id);
+        return reservation
+                .map(r -> ResponseEntity.ok(ReservationConverter.toDTO(r)))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     /**
      * Create a new reservation.
      *
-     * @param reservation Reservation details.
+     * @param request Reservation details.
      * @return Created reservation with 201 status.
      */
     @PostMapping("/create")
-    public ResponseEntity<Reservation> createReservation(@RequestBody Reservation reservation) {
-        reservationService.create(reservation);
-        return ResponseEntity.status(HttpStatus.CREATED).body(reservation);
+    public ResponseEntity<ReservationRequestDTO> createReservation(@RequestBody ReservationRequestDTO request) {
+       Optional<Workspace> workspaceOptional = workspaceService.findById(request.getWorkspaceId());
+       Workspace workspace = workspaceOptional.orElseThrow(() -> new WorkspaceNotFoundException(
+               NotFoundErrorCodes.WORKSPACE_NOT_FOUND,
+               "No Workspace found with ID: " + request.getWorkspaceId()
+       ));
+
+        Reservation reservation = ReservationConverter.toEntity(request, workspace);
+        reservationService.save(reservation);
+        return ResponseEntity.status(HttpStatus.CREATED).body(request);
     }
 
     /**
@@ -78,7 +96,7 @@ public class ReservationController {
      */
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> deleteReservation(@PathVariable("id") Long id) {
-        reservationService.remove(id);
+        reservationService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -89,12 +107,13 @@ public class ReservationController {
      * @return List of reservations.
      */
     @GetMapping("/get/customer/{customerName}")
-    public ResponseEntity<List<Reservation>> getReservationsByCustomer(@PathVariable("customerName") String customerName) {
+    public ResponseEntity<List<ReservationResponseDTO>> getReservationsByCustomer(@PathVariable("customerName") String customerName) {
         List<Reservation> reservations = reservationService.findReservationsByCustomer(customerName);
+        List<ReservationResponseDTO> reservationResponseDTOS = ReservationConverter.toDTO(reservations);
         if (reservations.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(reservations);
+        return ResponseEntity.ok(reservationResponseDTOS);
     }
 
     /**
@@ -104,11 +123,12 @@ public class ReservationController {
      * @return List of reservations.
      */
     @GetMapping("/get/workspace/{workspaceId}")
-    public ResponseEntity<List<Reservation>> getReservationsByWorkspace(@PathVariable("workspaceId") Long workspaceId) {
+    public ResponseEntity<List<ReservationResponseDTO>> getReservationsByWorkspace(@PathVariable("workspaceId") Long workspaceId) {
         List<Reservation> reservations = reservationService.findReservationsByWorkspace(workspaceId);
+        List<ReservationResponseDTO> reservationResponseDTOS = ReservationConverter.toDTO(reservations);
         if (reservations.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(reservations);
+        return ResponseEntity.ok(reservationResponseDTOS);
     }
 }

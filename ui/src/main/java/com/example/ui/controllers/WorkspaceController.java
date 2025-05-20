@@ -1,5 +1,8 @@
 package com.example.ui.controllers;
 
+import com.example.converters.WorkspaceConverter;
+import com.example.dto.requests.WorkspaceRequestDTO;
+import com.example.dto.responses.WorkspaceResponseDTO;
 import com.example.entities.Workspace;
 import com.example.services.WorkspaceService;
 import org.springframework.http.HttpStatus;
@@ -37,9 +40,11 @@ public class WorkspaceController {
      * @return List of all workspaces.
      */
     @GetMapping("/get-all")
-    public ResponseEntity<List<Workspace>> getAllWorkspaces() {
-        List<Workspace> workspaces = workspaceService.getAll();
-        return ResponseEntity.ok(workspaces);
+    public ResponseEntity<List<WorkspaceResponseDTO>> getAllWorkspaces() {
+        List<Workspace> workspaces = workspaceService.findAll();
+        List<WorkspaceResponseDTO> workspaceResponseDTOs = WorkspaceConverter.toDTO(workspaces);
+
+        return ResponseEntity.ok(workspaceResponseDTOs);
     }
 
     /**
@@ -49,22 +54,24 @@ public class WorkspaceController {
      * @return Workspace if found, 404 otherwise.
      */
     @GetMapping("/get/{id}")
-    public ResponseEntity<Workspace> getWorkspaceById(@PathVariable("id") Long id) {
-        Optional<Workspace> workspace = workspaceService.getById(id);
-        return workspace.map(ResponseEntity::ok)
+    public ResponseEntity<WorkspaceResponseDTO> getWorkspaceById(@PathVariable("id") Long id) {
+        Optional<Workspace> workspace = workspaceService.findById(id);
+        return workspace
+                .map(w -> ResponseEntity.ok(WorkspaceConverter.toDTO(w)))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     /**
      * Create a new workspace.
      *
-     * @param workspace Workspace details.
+     * @param request Workspace details.
      * @return Created workspace with 201 status.
      */
     @PostMapping("/create")
-    public ResponseEntity<Workspace> createWorkspace(@RequestBody Workspace workspace) {
-        workspaceService.create(workspace);
-        return ResponseEntity.status(HttpStatus.CREATED).body(workspace);
+    public ResponseEntity<WorkspaceRequestDTO> createWorkspace(@RequestBody WorkspaceRequestDTO request) {
+        Workspace workspace = WorkspaceConverter.toEntity(request);
+        workspaceService.save(workspace);
+        return ResponseEntity.status(HttpStatus.CREATED).body(request);
     }
 
     /**
@@ -75,7 +82,7 @@ public class WorkspaceController {
      */
     @DeleteMapping("remove/{id}")
     public ResponseEntity<Void> deleteWorkspace(@PathVariable("id") Long id) {
-        workspaceService.remove(id);
+        workspaceService.deleteById(id);
         return ResponseEntity.noContent().build();
 
     }

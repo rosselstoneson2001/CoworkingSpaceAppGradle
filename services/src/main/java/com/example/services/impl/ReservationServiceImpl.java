@@ -14,8 +14,8 @@ import com.example.services.WorkspaceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final WorkspaceService workspaceService;
 
     @Autowired
-    public ReservationServiceImpl(@Qualifier("jpaReservation") ReservationRepository reservationRepository, WorkspaceService workspaceService) {
+    public ReservationServiceImpl(ReservationRepository reservationRepository, WorkspaceService workspaceService) {
         this.reservationRepository = reservationRepository;
         this.workspaceService = workspaceService;
     }
@@ -49,8 +49,9 @@ public class ReservationServiceImpl implements ReservationService {
      * @throws InvalidReservationException if any required field is missing or if the workspace is unavailable
      * @throws WorkspaceNotFoundException  if the workspace with the given ID does not exist
      */
+    @Transactional
     @Override
-    public void create(Reservation reservation) {
+    public void save(Reservation reservation) {
 
         if (reservation.getWorkspace() == null ||
                 reservation.getCustomerName() == null ||
@@ -71,7 +72,7 @@ public class ReservationServiceImpl implements ReservationService {
         if (!isWorkspaceAvailable(workspace, reservation.getStartDateTime(), reservation.getEndDateTime())) {
             throw new InvalidReservationException(ValidationErrorCodes.INVALID_DATE, "The workspace is not available for the selected dates.");
         }
-        reservationRepository.add(reservation);
+        reservationRepository.save(reservation);
     }
 
     /**
@@ -80,9 +81,10 @@ public class ReservationServiceImpl implements ReservationService {
      * @return a list of all reservations
      * @throws ReservationNotFoundException if no reservations are found
      */
+    @Transactional(readOnly = true)
     @Override
-    public List<Reservation> getAll() {
-        List<Reservation> reservations = reservationRepository.getAll();
+    public List<Reservation> findAll() {
+        List<Reservation> reservations = reservationRepository.findAll();
         if (reservations.isEmpty()) {
             throw new ReservationNotFoundException(NotFoundErrorCodes.RESERVATION_NOT_FOUND, "Failed to retrieve all reservations. No Reservations found.");
         } else {
@@ -96,9 +98,10 @@ public class ReservationServiceImpl implements ReservationService {
      * @param reservationId the ID of the reservation to be retrieved
      * @return an Optional containing the reservation if found, or an empty Optional if not found
      */
+    @Transactional(readOnly = true)
     @Override
-    public Optional<Reservation> getById(Long reservationId) {
-        return reservationRepository.getById(reservationId);
+    public Optional<Reservation> findById(Long reservationId) {
+        return reservationRepository.findById(reservationId);
     }
 
     /**
@@ -109,6 +112,7 @@ public class ReservationServiceImpl implements ReservationService {
      * @throws InvalidReservationException  if the customer name is empty
      * @throws ReservationNotFoundException if no reservations are found for the customer
      */
+    @Transactional(readOnly = true)
     @Override
     public List<Reservation> findReservationsByCustomer(String customerName) {
         if (customerName.trim().isEmpty()) {
@@ -130,6 +134,7 @@ public class ReservationServiceImpl implements ReservationService {
      * @return a list of reservations for the workspace, or an empty list if none are found
      * @throws ReservationNotFoundException if no reservations are found for the workspace
      */
+    @Transactional(readOnly = true)
     @Override
     public List<Reservation> findReservationsByWorkspace(Long workspaceId) {
         List<Reservation> reservations;
@@ -151,10 +156,11 @@ public class ReservationServiceImpl implements ReservationService {
      * @param reservationId the ID of the reservation to be removed
      * @throws ReservationNotFoundException if no reservation with the given ID is found
      */
+    @Transactional
     @Override
-    public void remove(Long reservationId) {
-        if (getById(reservationId).isPresent()) {
-            reservationRepository.remove(reservationId);
+    public void deleteById(Long reservationId) {
+        if (findById(reservationId).isPresent()) {
+            reservationRepository.deleteById(reservationId);
         } else {
             throw new ReservationNotFoundException(NotFoundErrorCodes.RESERVATION_NOT_FOUND, "Failed to delete reservation. No reservations found with ID: " + reservationId);
         }

@@ -1,11 +1,20 @@
 package com.example.entities;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Workspace {
 
     @Id
@@ -24,36 +33,6 @@ public class Workspace {
 
     @OneToMany(mappedBy = "workspace", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Reservation> reservations = new ArrayList<>();
-
-
-    public Workspace(BigDecimal price,
-                     String type) {
-        this.price = price;
-        this.type = type;
-    }
-
-    public Workspace(Long workspaceId,
-                     BigDecimal price,
-                     String type) {
-        this.workspaceId = workspaceId;
-        this.price = price;
-        this.type = type;
-    }
-
-    public Workspace() {} // For JSON Deserialization
-
-    public Long getWorkspaceId() { return workspaceId; }
-    public BigDecimal getPrice() { return price; }
-    public String getType() { return type; }
-    public List<Reservation> getReservations() { return reservations; }
-    public boolean isActive() { return isActive; }
-
-    public void setWorkspaceId(Long workspaceId) { this.workspaceId = workspaceId; }
-    public void setPrice(BigDecimal price) { this.price = price; }
-    public void setType(String type) { this.type = type; }
-    public void setReservations(List<Reservation> reservations) { this.reservations = reservations; }
-    public void setActive(boolean active) { this.isActive = active; }
-
 
     @Override
     public String toString() {
