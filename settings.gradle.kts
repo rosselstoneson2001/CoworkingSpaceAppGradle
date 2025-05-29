@@ -1,5 +1,5 @@
 rootProject.name = "CoSpaceApp"
-include("domain", "services", "ui")
+include("domain", "services", "controllers", "security")
 
 
 pluginManagement {

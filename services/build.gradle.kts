@@ -16,7 +16,7 @@ dependencies {
     // Logger
     implementation("org.slf4j:slf4j-api:2.0.9")
 
-    //    Spring boot
+    // Spring boot
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 

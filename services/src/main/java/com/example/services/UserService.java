@@ -13,4 +13,6 @@ public interface UserService extends CrudService<User, Long> {
 
     boolean checkPassword(Long userId, String plainPassword);
 
+    User findByEmail(String email);
+
 }

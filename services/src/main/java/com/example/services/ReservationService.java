@@ -21,7 +21,7 @@ public interface ReservationService extends CrudService<Reservation, Long> {
 
     List<Reservation> findReservationsByWorkspace(Long workspaceId);
 
+    List<Reservation> findReservationsByCustomerId(String email);
+
     boolean isWorkspaceAvailable(Workspace workspace, LocalDateTime startDateTime, LocalDateTime endDateTime);
-
-
 }

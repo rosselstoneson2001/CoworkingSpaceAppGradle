@@ -15,16 +15,17 @@ repositories {
 
 dependencies {
 
-    implementation(project(":ui"))
+    implementation(project(":controllers"))
     implementation(project(":domain"))
     implementation(project(":services"))
+    implementation(project(":security"))
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 application {
-    mainClass.set("com.example.UIMain")
+    mainClass.set("com.example.CoSpaceApp")
 }
 
 subprojects {

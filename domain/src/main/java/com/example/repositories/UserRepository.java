@@ -10,24 +10,17 @@ import org.springframework.stereotype.Repository;
 /**
  * Repository interface for managing {@link User} entities.
  * <p>
- * This interface extends {@link JpaRepository} and provides methods for accessing and manipulating user data.
- * It allows for basic CRUD operations for the {@link User} entity, such as creating, reading, updating, and deleting users.
- * Additionally, it provides custom query methods for updating the status of a user.
+ * Extends {@link JpaRepository} to provide CRUD operations and custom queries
+ * for managing user records in the database.
  * </p>
  *
  * <p>
- * The repository includes the following methods:
+ * This repository includes:
  * </p>
- *
  * <ul>
- *     <li>{@link #deleteById(Long id)} - Marks a user as inactive (soft delete) by updating the {@code isActive} field.</li>
+ *     <li>{@link #deleteById(Long)}: Soft-deletes a user by setting {@code isActive} to {@code false}.</li>
+ *     <li>{@link #findByEmail(String)}: Finds a user by their email address.</li>
  * </ul>
- *
- * <p>
- * The {@link #deleteById(Long)} method is annotated with {@link Modifying} to indicate that it performs
- * an update operation in the database rather than a delete operation. The query modifies the user's
- * active status, rather than removing the user record from the database.
- * </p>
  *
  * @see User
  * @see JpaRepository
@@ -44,5 +37,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("UPDATE users u SET u.isActive = false WHERE u.userId = :id")
     @Override
     void deleteById(@Param("id") Long id);
+
+    /**
+     * Finds a user by their email.
+     *
+     * @param email the email of the user
+     * @return the user with the given email, or {@code null} if not found
+     */
+    User findByEmail(String email);
 
 }

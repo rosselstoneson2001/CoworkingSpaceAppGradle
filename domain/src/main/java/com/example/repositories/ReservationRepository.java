@@ -27,11 +27,10 @@ import java.util.List;
  * </p>
  *
  * <ul>
- *     <li>{@link #getReservationsByCustomer(String customerName)} - Fetches a list of active reservations
- *     for a given customer name. If the customer name is null, it fetches all reservations where the name is null.</li>
- *     <li>{@link #findReservationsByWorkspace(Long workspaceId)} - Fetches a list of active reservations
- *     for a given workspace ID. If the workspace ID is null, it fetches all reservations with null workspace.</li>
- *     <li>{@link #deleteById(Long id)} - Marks a reservation as inactive by its ID, rather than deleting it from the database.</li>
+ *     <li>{@link #getReservationsByCustomer(String)} – Get active reservations by customer name.</li>
+ *     <li>{@link #findReservationsByWorkspace(Long)} – Get active reservations by workspace ID.</li>
+ *     <li>{@link #findReservationsByCustomerEmail(String)} – Get active reservations by customer email.</li>
+ *     <li>{@link #deleteById(Long)} – Soft-deletes a reservation.</li>
  * </ul>
  *
  * <p>
@@ -62,6 +61,15 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      */
     @Query("SELECT r FROM reservation r WHERE (r.workspace = :workspaceId OR r.workspace IS NULL) AND r.isActive = true")
     List<Reservation> findReservationsByWorkspace(Long workspaceId);
+
+    /**
+     * Fetches active reservations for a given customer email.
+     *
+     * @param email the email of the customer
+     * @return list of active reservations
+     */
+    @Query("SELECT r FROM reservation r WHERE (r.customer.email = :email) AND r.isActive = true")
+    List<Reservation> findReservationsByCustomerEmail(String email);
 
     /**
      * Marks a reservation as inactive (soft delete) by its ID.
