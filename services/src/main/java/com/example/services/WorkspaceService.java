@@ -1,7 +1,7 @@
 package com.example.services;
 
 
-import com.example.entities.Workspace;
+import com.example.domain.entities.Workspace;
 
 /**
  * Service interface for managing workspace-related operations.

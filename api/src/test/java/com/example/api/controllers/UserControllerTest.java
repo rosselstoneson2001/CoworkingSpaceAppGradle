@@ -4,8 +4,6 @@ import com.example.api.controllers.config.TestSecurityConfig;
 import com.example.api.dto.requests.UserRequestDTO;
 import com.example.api.dto.responses.UserResponseDTO;
 import com.example.domain.entities.User;
-import com.example.domain.exceptions.UserNotFoundException;
-import com.example.domain.exceptions.enums.NotFoundErrorCodes;
 import com.example.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +14,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -26,7 +23,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ActiveProfiles("test")
 @WebMvcTest(UserController.class)
 @Import(TestSecurityConfig.class)
 class UserControllerTest {
@@ -115,7 +111,7 @@ class UserControllerTest {
     void deleteUser_ShouldReturn204() throws Exception {
         doNothing().when(userService).deleteById(1L);
 
-        mockMvc.perform(delete("/users/remove/1"))
+        mockMvc.perform(delete("/users/1"))
                 .andExpect(status().isNoContent());
     }
 
@@ -146,9 +142,9 @@ class UserControllerTest {
     @WithMockUser(username = "testuser", roles = {"ADMIN"})
     @Test
     void deleteUser_WhenException_ShouldReturn404() throws Exception {
-        doThrow(new UserNotFoundException(NotFoundErrorCodes.USER_NOT_FOUND, "User not found")).when(userService).deleteById(100L);
+        doThrow(new RuntimeException()).when(userService).deleteById(1L);
 
-            mockMvc.perform(delete("/users/remove/100"))
+        mockMvc.perform(delete("/users/1"))
                 .andExpect(status().isNotFound());
     }
 

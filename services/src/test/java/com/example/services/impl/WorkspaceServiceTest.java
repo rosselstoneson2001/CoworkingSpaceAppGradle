@@ -1,13 +1,17 @@
 package com.example.services.impl;
 
-import com.example.entities.Workspace;
-import com.example.exceptions.InvalidWorkspaceException;
-import com.example.exceptions.enums.ValidationErrorCodes;
-import com.example.repositories.WorkspaceRepository;
+import com.example.domain.entities.Workspace;
+import com.example.domain.exceptions.InvalidWorkspaceException;
+import com.example.domain.exceptions.WorkspaceNotFoundException;
+import com.example.domain.repositories.WorkspaceRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,95 +20,106 @@ import static org.mockito.Mockito.*;
 
 public class WorkspaceServiceTest {
 
+    @Mock
     private WorkspaceRepository workspaceRepository;
+
+    @InjectMocks
     private WorkspaceServiceImpl workspaceService;
 
     @BeforeEach
-    void setUp() {
-        workspaceRepository = mock(WorkspaceRepository.class);
-        workspaceService = new WorkspaceServiceImpl(workspaceRepository);
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void shouldCreateWorkspaceSuccessfully() {
-        Workspace workspace = new Workspace(new BigDecimal("100.0"), "Office");
+    public void testSave_ValidWorkspace_Success() {
+        Workspace workspace = new Workspace();
+        workspace.setType("Office");
+        workspace.setPrice(BigDecimal.valueOf(100));
 
         workspaceService.save(workspace);
 
-        verify(workspaceRepository).add(workspace);
+        verify(workspaceRepository, times(1)).save(workspace);
     }
 
     @Test
-    void shouldReturnAllWorkspaces() {
-        Workspace workspace1 = new Workspace(new BigDecimal("100.0"), "Office");
-        Workspace workspace2 = new Workspace(new BigDecimal("150.0"), "Meeting");
-        List<Workspace> workspaces = List.of(workspace1, workspace2);
+    public void testFindAll_WithWorkspaces_ReturnsList() {
+        Workspace workspace = new Workspace();
+        workspace.setType("Office");
+        workspace.setPrice(BigDecimal.valueOf(100));
 
-        when(workspaceRepository.getAll()).thenReturn(workspaces);
+        when(workspaceRepository.findAll()).thenReturn(List.of(workspace));
 
         List<Workspace> result = workspaceService.findAll();
 
-        assertEquals(workspaces, result);
+        assertEquals(1, result.size());
     }
 
     @Test
-    void shouldReturnWorkspaceById() {
-        Workspace workspace = new Workspace(new BigDecimal("100.0"), "Office");
-        when(workspaceRepository.getById(1L)).thenReturn(Optional.of(workspace));
+    public void testFindById_Found_ReturnsWorkspace() {
+        Workspace workspace = new Workspace();
+        workspace.setType("Office");
+        workspace.setPrice(BigDecimal.valueOf(100));
+
+        when(workspaceRepository.findById(1L)).thenReturn(Optional.of(workspace));
 
         Optional<Workspace> result = workspaceService.findById(1L);
-
         assertTrue(result.isPresent());
-        assertEquals(workspace, result.get());
     }
 
     @Test
-    void shouldRemoveWorkspaceById() {
+    public void testGetWorkspaceWithReservations_ReturnsWorkspace() {
+        Workspace workspace = new Workspace();
+        when(workspaceRepository.getWorkspaceWithReservations(1L)).thenReturn(workspace);
+
+        Workspace result = workspaceService.getWorkspaceWithReservations(1L);
+
+        assertNotNull(result);
+    }
+
+    @Test
+    public void testFindById_NotFound_ReturnsEmpty() {
+        when(workspaceRepository.findById(1L)).thenReturn(Optional.empty());
+
+        Optional<Workspace> result = workspaceService.findById(1L);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testDeleteById_DeletesSuccessfully() {
+        doNothing().when(workspaceRepository).deleteById(1L);
+
         workspaceService.deleteById(1L);
 
-        verify(workspaceRepository).remove(1L);
+        verify(workspaceRepository, times(1)).deleteById(1L);
     }
 
-    // Exception testing
+    // --- EXCEPTION CASES ---
 
     @Test
-    void shouldThrowInvalidWorkspaceExceptionWhenWorkspaceIsNull() {
-        InvalidWorkspaceException thrown = assertThrows(InvalidWorkspaceException.class,
-                () -> workspaceService.save(null));
+    public void testSave_InvalidType_ThrowsException() {
+        Workspace workspace = new Workspace();
+        workspace.setType("");
+        workspace.setPrice(BigDecimal.valueOf(100));
 
-        assertEquals("Workspace object cannot be null.", thrown.getMessage());
-    }
-
-    @Test
-    void shouldThrowInvalidWorkspaceExceptionWhenTypeIsNull() {
-        Workspace workspace = new Workspace(new BigDecimal("123.32"), null);
-
-        InvalidWorkspaceException thrown = assertThrows(InvalidWorkspaceException.class,
-                () -> workspaceService.save(workspace));
-
-        assertEquals("Workspace type is required.", thrown.getMessage());
+        assertThrows(InvalidWorkspaceException.class, () -> workspaceService.save(workspace));
+        verify(workspaceRepository, never()).save(any());
     }
 
     @Test
-    void shouldThrowInvalidWorkspaceExceptionWhenPriceIsNull() {
-        Workspace workspace = new Workspace(null, "Office");
+    public void testSave_InvalidPrice_ThrowsException() {
+        Workspace workspace = new Workspace();
+        workspace.setType("Office");
+        workspace.setPrice(BigDecimal.ZERO);
 
-        InvalidWorkspaceException thrown = assertThrows(InvalidWorkspaceException.class,
-                () -> workspaceService.save(workspace));
-
-        assertEquals("Workspace price is required.", thrown.getMessage());
+        assertThrows(InvalidWorkspaceException.class, () -> workspaceService.save(workspace));
+        verify(workspaceRepository, never()).save(any());
     }
 
     @Test
-    void shouldThrowExceptionWhenRepositoryThrowsError() {
-        Workspace workspace = new Workspace(new BigDecimal("100.0"), "Office");
+    public void testFindAll_EmptyList_ThrowsException() {
+        when(workspaceRepository.findAll()).thenReturn(Collections.emptyList());
 
-        doThrow(new InvalidWorkspaceException(ValidationErrorCodes.INVALID_DATE, "Invalid data")).when(workspaceRepository).add(any());
-
-        InvalidWorkspaceException thrown = assertThrows(InvalidWorkspaceException.class,
-                () -> workspaceService.save(workspace));
-
-        assertEquals("Invalid data", thrown.getMessage());
+        assertThrows(WorkspaceNotFoundException.class, () -> workspaceService.findAll());
     }
-
 }

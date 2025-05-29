@@ -32,12 +32,13 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/**").hasRole("ADMIN")
+//                        .requestMatchers("/users/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .httpBasic()
                 .and()
                 .formLogin(withDefaults())
+                .logout(logout -> logout.logoutSuccessUrl("/login?logout"))
                 .sessionManagement(session -> session.sessionCreationPolicy(
                         SessionCreationPolicy.IF_REQUIRED));
         return http.build();

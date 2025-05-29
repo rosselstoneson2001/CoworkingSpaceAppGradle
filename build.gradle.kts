@@ -1,46 +1,54 @@
 plugins {
     id("java")
     id("application")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("org.springframework.boot") version "3.2.4"
-    id("io.spring.dependency-management") version "1.1.4"
+    id("io.spring.dependency-management") version "1.1.7"
 }
+
+val springBootVersion = "3.2.4"
 
 group = "com.example"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-
-    implementation(project(":controllers"))
-    implementation(project(":domain"))
-    implementation(project(":services"))
-    implementation(project(":security"))
-
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-}
-
-application {
-    mainClass.set("com.example.CoSpaceApp")
-}
-
 subprojects {
-    apply(plugin = "org.springframework.boot")
     apply(plugin = "io.spring.dependency-management")
-    }
+    apply(plugin = "java")
 
-    tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-        archiveClassifier.set("")
-        manifest {
-            attributes["Main-Class"] = "com.example.UIMain"
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
         }
     }
 
-    tasks.test {
-        useJUnitPlatform() // Use JUnit platform to run tests
+    dependencyManagement {
+        imports {
+            mavenBom("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
+        }
     }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+
+//        // SLF4J API (Interface for logging) || Log4j2 SLF4J Binding (to use SLF4J with Log4j2 as the backend)
+//        implementation("org.slf4j:slf4j-api:2.0.9")
+//        implementation("org.apache.logging.log4j:log4j-core:2.20.0")
+//        implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0")
+
+        // Exclude conflict dependencies
+        configurations.all {
+            exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
+            exclude(group = "ch.qos.logback", module = "logback-classic")
+            exclude(group = "org.apache.logging.log4j", module = "log4j-to-slf4j")
+        }
+
+    }
+}
+
+application {
+    mainClass.set("com.example.mvc.CoSpaceApp")
+}
 

@@ -3,26 +3,33 @@ package com.example.api.converters;
 import com.example.api.dto.requests.ReservationRequestDTO;
 import com.example.api.dto.responses.ReservationResponseDTO;
 import com.example.domain.entities.Reservation;
-import com.example.domain.entities.User;
 import com.example.domain.entities.Workspace;
-import org.modelmapper.ModelMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ReservationConverter {
 
-    private static final ModelMapper modelMapper = new ModelMapper();
+    public static Reservation toEntity(ReservationRequestDTO dto, Workspace workspace) {
+            Reservation reservation = new Reservation();
 
-    public static Reservation toEntity(ReservationRequestDTO dto, Workspace workspace, User customer) {
-        Reservation reservation = modelMapper.map(dto, Reservation.class);
-        reservation.setWorkspace(workspace);
-        reservation.setCustomer(customer);
-        return reservation;
-    }
+            reservation.setWorkspace(workspace);
+            reservation.setCustomerName(dto.getCustomerName());
+            reservation.setStartDateTime(dto.getStartDateTime());
+            reservation.setEndDateTime(dto.getEndDateTime());
+
+            return reservation;
+        }
 
     public static ReservationResponseDTO toDTO(Reservation reservation) {
-        return modelMapper.map(reservation, ReservationResponseDTO.class);
+        ReservationResponseDTO dto = new ReservationResponseDTO();
+
+        dto.setReservationId(reservation.getReservationId());
+        dto.setCustomerName(reservation.getCustomerName());
+        dto.setStartDateTime(reservation.getStartDateTime());
+        dto.setEndDateTime(reservation.getEndDateTime());
+
+        return dto;
     }
 
     public static List<ReservationResponseDTO> toDTO(List<Reservation> reservations) {

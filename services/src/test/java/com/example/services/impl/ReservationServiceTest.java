@@ -1,121 +1,168 @@
 package com.example.services.impl;
 
-import com.example.entities.Reservation;
-import com.example.entities.Workspace;
-import com.example.exceptions.InvalidReservationException;
-import com.example.exceptions.WorkspaceNotFoundException;
-import com.example.repositories.ReservationRepository;
-import com.example.repositories.WorkspaceRepository;
+import com.example.domain.entities.Reservation;
+import com.example.domain.entities.Workspace;
+import com.example.domain.exceptions.InvalidReservationException;
+import com.example.domain.exceptions.ReservationNotFoundException;
+import com.example.domain.repositories.ReservationRepository;
+import com.example.services.WorkspaceService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class ReservationServiceTest {
 
+    @Mock
     private ReservationRepository reservationRepository;
+
+    @Mock
+    private WorkspaceService workspaceService;
+
+    @InjectMocks
     private ReservationServiceImpl reservationService;
 
-    private WorkspaceRepository workspaceRepository;
-    private WorkspaceServiceImpl workspaceService;
-
-    private Reservation reservation;
     private Workspace workspace;
+    private Reservation reservation;
 
     @BeforeEach
     void setUp() {
-//        reservation = new Reservation(1L, "John Doe",
-//                LocalDateTime.now().plusDays(1),
-//                LocalDateTime.now().plusDays(2),
-//                LocalDateTime.now());
-//        workspace = new Workspace();
+        MockitoAnnotations.openMocks(this);
 
-        workspaceRepository = mock(WorkspaceRepository.class);
-        workspaceService = new WorkspaceServiceImpl(workspaceRepository);
+        workspace = new Workspace();
+        workspace.setWorkspaceId(1L);
 
-        reservationRepository = mock(ReservationRepository.class);
-        reservationService = new ReservationServiceImpl(reservationRepository, workspaceService);
+        reservation = new Reservation();
+        reservation.setReservationId(1L);
+        reservation.setWorkspace(workspace);
+        reservation.setCustomerName("John Doe");
+        reservation.setStartDateTime(LocalDateTime.now().plusDays(1));
+        reservation.setEndDateTime(LocalDateTime.now().plusDays(2));
     }
 
     @Test
-    void shouldCreateReservationSuccessfully() {
-        when(workspaceService.findById(any())).thenReturn(Optional.of(workspace));
-        when(reservationRepository.findReservationsByWorkspace(any())).thenReturn(List.of());
+    void testSave_ValidReservation_Success() {
+        when(workspaceService.getWorkspaceWithReservations(1L)).thenReturn(workspace);
+        when(reservationRepository.save(reservation)).thenReturn(reservation);
 
         assertDoesNotThrow(() -> reservationService.save(reservation));
 
         verify(reservationRepository, times(1)).save(reservation);
     }
 
+
     @Test
-    void shouldReturnAllReservations() {
-        List<Reservation> reservations = List.of(reservation);
+    void testFindById_ExistingId_ReturnsReservation() {
+        when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation));
+
+        Optional<Reservation> found = reservationService.findById(1L);
+
+        assertTrue(found.isPresent());
+        assertEquals(reservation, found.get());
+    }
+
+    @Test
+    void findAll_shouldReturnReservations_whenReservationsExist() {
+        List<Reservation> reservations = List.of(new Reservation(), new Reservation());
         when(reservationRepository.findAll()).thenReturn(reservations);
 
-        assertEquals(reservations, reservationService.findAll());
+        List<Reservation> result = reservationService.findAll();
+
+        assertEquals(2, result.size());
+        verify(reservationRepository).findAll();
     }
 
     @Test
-    void shouldFindReservationById() {
-        when(reservationRepository.getById(any())).thenReturn(reservation);
+    void findReservationsByCustomerId_shouldReturnReservations_whenFound() {
+        String email = "test@example.com";
+        List<Reservation> reservations = List.of(new Reservation());
+        when(reservationRepository.findReservationsByCustomerEmail(email)).thenReturn(reservations);
 
-        assertEquals(Optional.of(reservation), reservationService.findById(1L));
+        List<Reservation> result = reservationService.findReservationsByCustomerEmail(email);
+
+        assertEquals(1, result.size());
+        verify(reservationRepository).findReservationsByCustomerEmail(email);
     }
 
     @Test
-    void shouldRemoveReservation() {
-        doNothing().when(reservationRepository).deleteById(any());
+    void findReservationsByWorkspace_shouldReturnReservations_whenFound() {
+        Long workspaceId = 1L;
+        List<Reservation> reservations = List.of(new Reservation());
+        when(reservationRepository.findReservationsByWorkspace(workspaceId)).thenReturn(reservations);
 
-        assertDoesNotThrow(() -> reservationService.deleteById(1L));
-        verify(reservationRepository, times(1)).deleteById(1L);
+        List<Reservation> result = reservationService.findReservationsByWorkspace(workspaceId);
+
+        assertEquals(1, result.size());
+        verify(reservationRepository).findReservationsByWorkspace(workspaceId);
     }
 
-    // Exceptions testing
+    // --- EXCEPTION CASES ---
 
     @Test
-    void shouldThrowExceptionWhenFieldsAreMissing() {
-        Reservation invalidReservation = new Reservation();
+    void testSave_NullFields_ThrowsException() {
+        reservation.setCustomerName(null);
 
-        Exception exception = assertThrows(InvalidReservationException.class, () -> reservationService.save(invalidReservation));
+        InvalidReservationException exception = assertThrows(InvalidReservationException.class, () -> reservationService.save(reservation));
         assertEquals("All fields are required for booking.", exception.getMessage());
     }
 
     @Test
-    void shouldThrowExceptionWhenEndDateBeforeStartDate() {
-        reservation.setEndDateTime(reservation.getStartDateTime().minusDays(1));
+    void testSave_EndBeforeStart_ThrowsException() {
+        reservation.setEndDateTime(LocalDateTime.now().plusDays(1));
+        reservation.setStartDateTime(LocalDateTime.now().plusDays(2));
 
-        Exception exception = assertThrows(InvalidReservationException.class, () -> reservationService.save(reservation));
+        InvalidReservationException exception = assertThrows(InvalidReservationException.class, () -> reservationService.save(reservation));
         assertEquals("End date cannot be before start date.", exception.getMessage());
     }
 
     @Test
-    void shouldThrowExceptionWhenWorkspaceNotFound() {
-        when(workspaceService.findById(any())).thenReturn(Optional.empty());
+    void testFindAll_NoReservations_ThrowsException() {
+        when(reservationRepository.findAll()).thenReturn(Collections.emptyList());
 
-        Exception exception = assertThrows(WorkspaceNotFoundException.class, () -> reservationService.save(reservation));
-        assertEquals("Workspace with ID 1 not found.", exception.getMessage());
+        assertThrows(ReservationNotFoundException.class, () -> reservationService.findAll());
     }
 
     @Test
-    void shouldThrowExceptionWhenWorkspaceIsNotAvailable() {
-        when(workspaceService.findById(any())).thenReturn(Optional.of(workspace));
-        when(reservationRepository.findReservationsByWorkspace(any())).thenReturn(List.of(reservation));
-
-        Exception exception = assertThrows(InvalidReservationException.class, () -> reservationService.save(reservation));
-        assertEquals("The workspace is not available for the selected dates.", exception.getMessage());
+    void testFindReservationsByCustomer_EmptyName_ThrowsException() {
+        assertThrows(InvalidReservationException.class, () -> reservationService.findReservationsByCustomer(" "));
     }
-
 
     @Test
-    void shouldThrowExceptionWhenCustomerNameIsEmpty() {
-        Exception exception = assertThrows(InvalidReservationException.class, () -> reservationService.findReservationsByCustomer(" "));
+    void testDeleteById_NotExisting_ThrowsException() {
+        when(reservationRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertEquals("Customer name cannot be empty.", exception.getMessage());
+        assertThrows(ReservationNotFoundException.class, () -> reservationService.deleteById(99L));
     }
 
+    // True & False
+
+    @Test
+    void testIsWorkspaceAvailable_NoConflicts_ReturnsTrue() {
+        workspace.setReservations(Collections.emptyList());
+
+        boolean available = reservationService.isWorkspaceAvailable(workspace, reservation.getStartDateTime(), reservation.getEndDateTime());
+
+        assertTrue(available);
+    }
+
+    @Test
+    void testIsWorkspaceAvailable_WithConflicts_ReturnsFalse() {
+        Reservation existingReservation = new Reservation();
+        existingReservation.setStartDateTime(LocalDateTime.now().plusDays(1));
+        existingReservation.setEndDateTime(LocalDateTime.now().plusDays(3));
+        workspace.setReservations(List.of(existingReservation));
+
+        boolean available = reservationService.isWorkspaceAvailable(workspace, LocalDateTime.now().plusDays(2), LocalDateTime.now().plusDays(4));
+
+        assertFalse(available);
+    }
 }

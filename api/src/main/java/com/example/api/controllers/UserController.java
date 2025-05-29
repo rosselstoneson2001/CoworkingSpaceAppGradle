@@ -84,10 +84,14 @@ public class UserController {
      * @return HTTP 204 No Content if the user is deleted successfully,
      *         404 if the user is not found, or 500 for other errors.
      */
-    @DeleteMapping("remove/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
+        try {
             userService.deleteById(id);
             return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     /**

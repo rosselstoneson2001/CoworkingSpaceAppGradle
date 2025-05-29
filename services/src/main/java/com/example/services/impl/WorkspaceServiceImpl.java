@@ -1,12 +1,12 @@
 package com.example.services.impl;
 
 
-import com.example.entities.Workspace;
-import com.example.exceptions.InvalidWorkspaceException;
-import com.example.exceptions.WorkspaceNotFoundException;
-import com.example.exceptions.enums.NotFoundErrorCodes;
-import com.example.exceptions.enums.ValidationErrorCodes;
-import com.example.repositories.WorkspaceRepository;
+import com.example.domain.entities.Workspace;
+import com.example.domain.exceptions.InvalidWorkspaceException;
+import com.example.domain.exceptions.WorkspaceNotFoundException;
+import com.example.domain.exceptions.enums.NotFoundErrorCodes;
+import com.example.domain.exceptions.enums.ValidationErrorCodes;
+import com.example.domain.repositories.WorkspaceRepository;
 import com.example.services.WorkspaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

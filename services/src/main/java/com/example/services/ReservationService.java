@@ -1,8 +1,8 @@
 package com.example.services;
 
 
-import com.example.entities.Reservation;
-import com.example.entities.Workspace;
+import com.example.domain.entities.Reservation;
+import com.example.domain.entities.Workspace;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +21,7 @@ public interface ReservationService extends CrudService<Reservation, Long> {
 
     List<Reservation> findReservationsByWorkspace(Long workspaceId);
 
-    List<Reservation> findReservationsByCustomerId(String email);
+    List<Reservation> findReservationsByCustomerEmail(String email);
 
     boolean isWorkspaceAvailable(Workspace workspace, LocalDateTime startDateTime, LocalDateTime endDateTime);
 }
