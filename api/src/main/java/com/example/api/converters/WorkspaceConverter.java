@@ -3,24 +3,30 @@ package com.example.api.converters;
 import com.example.api.dto.requests.WorkspaceRequestDTO;
 import com.example.api.dto.responses.WorkspaceResponseDTO;
 import com.example.domain.entities.Workspace;
-import org.modelmapper.ModelMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class WorkspaceConverter {
 
-    private static final ModelMapper modelMapper = new ModelMapper();
-
-
     public static Workspace toEntity(WorkspaceRequestDTO dto) {
-        return modelMapper.map(dto, Workspace.class);
+        Workspace workspace = new Workspace();
+
+        workspace.setType(dto.getType());
+        workspace.setPrice(dto.getPrice());
+
+        return workspace;
     }
 
     public static WorkspaceResponseDTO toDTO(Workspace entity) {
-        WorkspaceResponseDTO dto = modelMapper.map(entity, WorkspaceResponseDTO.class);
+        WorkspaceResponseDTO dto = new WorkspaceResponseDTO();
+
+        dto.setWorkspaceId(entity.getWorkspaceId());
+        dto.setType(entity.getType());
+        dto.setPrice(entity.getPrice());
         dto.setReservations(ReservationConverter.toDTO(entity.getReservations()));
-                return dto;
+
+        return dto;
     }
 
     public static List<WorkspaceResponseDTO> toDTO(List<Workspace> workspaces) {

@@ -1,13 +1,13 @@
 package com.example.services.impl;
 
-import com.example.entities.User;
-import com.example.exceptions.InvalidUserException;
-import com.example.exceptions.UserNotFoundException;
-import com.example.exceptions.enums.NotFoundErrorCodes;
-import com.example.exceptions.enums.ValidationErrorCodes;
-import com.example.repositories.UserRepository;
+import com.example.domain.entities.User;
+import com.example.domain.exceptions.InvalidUserException;
+import com.example.domain.exceptions.UserNotFoundException;
+import com.example.domain.exceptions.enums.NotFoundErrorCodes;
+import com.example.domain.exceptions.enums.ValidationErrorCodes;
+import com.example.domain.repositories.UserRepository;
+import com.example.domain.utils.PasswordUtils;
 import com.example.services.UserService;
-import com.example.utils.PasswordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

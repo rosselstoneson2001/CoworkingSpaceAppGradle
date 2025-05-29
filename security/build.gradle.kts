@@ -1,31 +1,8 @@
-plugins {
-    id("java")
-}
-
-group = "com.example"
-version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project(":domain"))
     implementation(project(":services"))
 
+//    Spring Framework
     implementation("org.springframework.boot:spring-boot-starter-security")
 
-    // Exclude conflict dependencies
-    configurations.all {
-        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
-        exclude(group = "ch.qos.logback", module = "logback-classic")
-        exclude(group = "org.apache.logging.log4j", module = "log4j-to-slf4j")
-    }
-
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-}
-
-tasks.test {
-    useJUnitPlatform()
 }

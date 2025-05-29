@@ -1,14 +1,14 @@
 package com.example.services.impl;
 
 
-import com.example.entities.Reservation;
-import com.example.entities.Workspace;
-import com.example.exceptions.InvalidReservationException;
-import com.example.exceptions.ReservationNotFoundException;
-import com.example.exceptions.WorkspaceNotFoundException;
-import com.example.exceptions.enums.NotFoundErrorCodes;
-import com.example.exceptions.enums.ValidationErrorCodes;
-import com.example.repositories.ReservationRepository;
+import com.example.domain.entities.Reservation;
+import com.example.domain.entities.Workspace;
+import com.example.domain.exceptions.InvalidReservationException;
+import com.example.domain.exceptions.ReservationNotFoundException;
+import com.example.domain.exceptions.WorkspaceNotFoundException;
+import com.example.domain.exceptions.enums.NotFoundErrorCodes;
+import com.example.domain.exceptions.enums.ValidationErrorCodes;
+import com.example.domain.repositories.ReservationRepository;
 import com.example.services.ReservationService;
 import com.example.services.WorkspaceService;
 import org.slf4j.Logger;
@@ -152,7 +152,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public List<Reservation> findReservationsByCustomerId(String email) {
+    public List<Reservation> findReservationsByCustomerEmail(String email) {
         List<Reservation> reservation = reservationRepository.findReservationsByCustomerEmail(email);
         if(reservation.isEmpty()) {
             throw new ReservationNotFoundException(NotFoundErrorCodes.RESERVATION_NOT_FOUND,
