@@ -3,6 +3,7 @@ package com.example.converters;
 import com.example.dto.requests.UserRequestDTO;
 import com.example.dto.responses.UserResponseDTO;
 import com.example.entities.User;
+import com.example.utils.PasswordUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,7 +16,7 @@ public class UserConverter {
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword());
+        user.setPassword(PasswordUtils.hashPassword(dto.getPassword()));
 
         return user;
     }

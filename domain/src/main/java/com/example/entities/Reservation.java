@@ -22,11 +22,6 @@ public class Reservation {
     @Column(name = "reservation_id")
     private Long reservationId;
 
-    @ManyToOne
-    @JoinColumn(name = "workspace_id", nullable = false)
-    @JsonIgnore
-    private Workspace workspace;
-
     @Column(name = "customer_name", nullable = false, length = 100)
     private String customerName;
 
@@ -42,6 +37,16 @@ public class Reservation {
 
     @Column(name = "is_active")
     private boolean isActive = true;
+
+    @ManyToOne
+    @JoinColumn(name = "workspace_id", nullable = false)
+    @JsonIgnore
+    private Workspace workspace;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User customer;
+
 
     @Override
     public String toString() {

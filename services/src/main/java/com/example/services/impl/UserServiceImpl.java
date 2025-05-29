@@ -120,4 +120,13 @@ public class UserServiceImpl implements UserService {
         String hashedPassword = user.get().getPassword();
         return PasswordUtils.checkPassword(plainPassword, hashedPassword);
     }
+
+    @Override
+    public User findByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        if(user == null) {
+            throw new UserNotFoundException(NotFoundErrorCodes.USER_NOT_FOUND, "User not found with email: " + email);
+        }
+        return user;
+    }
 }

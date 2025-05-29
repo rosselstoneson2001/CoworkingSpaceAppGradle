@@ -141,13 +141,24 @@ public class ReservationServiceImpl implements ReservationService {
         try {
             reservations = reservationRepository.findReservationsByWorkspace(workspaceId);
             if (reservations.isEmpty()) {
-                throw new ReservationNotFoundException(NotFoundErrorCodes.RESERVATION_NOT_FOUND, "Failed to retrieve reservation by workspace. No reservations found for workspace ID: " + workspaceId);
+                throw new ReservationNotFoundException(NotFoundErrorCodes.RESERVATION_NOT_FOUND,
+                        "Failed to retrieve reservation by workspace. No reservations found for workspace ID: " + workspaceId);
             }
         } catch (ReservationNotFoundException e) {
             INTERNAL_LOGGER.error(e.getErrorCode().getCode(), "\"No reservations found \nDetails: " + e.getMessage(), e);
             reservations = new ArrayList<>();
         }
         return reservations;
+    }
+
+    @Override
+    public List<Reservation> findReservationsByCustomerId(String email) {
+        List<Reservation> reservation = reservationRepository.findReservationsByCustomerEmail(email);
+        if(reservation.isEmpty()) {
+            throw new ReservationNotFoundException(NotFoundErrorCodes.RESERVATION_NOT_FOUND,
+                    "Failed to retrieve reservation by Customer ID. No reservations found for Customer ID: " + email);
+        }
+        return reservation;
     }
 
     /**
