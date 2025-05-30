@@ -4,11 +4,13 @@ import com.example.domain.entities.Workspace;
 import com.example.domain.exceptions.InvalidWorkspaceException;
 import com.example.domain.exceptions.WorkspaceNotFoundException;
 import com.example.domain.repositories.WorkspaceRepository;
+import com.example.services.notifications.events.WorkspaceConfitmationEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -22,6 +24,9 @@ public class WorkspaceServiceTest {
 
     @Mock
     private WorkspaceRepository workspaceRepository;
+
+    @Mock
+    ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private WorkspaceServiceImpl workspaceService;
@@ -40,6 +45,7 @@ public class WorkspaceServiceTest {
         workspaceService.save(workspace);
 
         verify(workspaceRepository, times(1)).save(workspace);
+        verify(eventPublisher).publishEvent(any(WorkspaceConfitmationEvent.class));
     }
 
     @Test

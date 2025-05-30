@@ -6,11 +6,13 @@ import com.example.domain.exceptions.InvalidReservationException;
 import com.example.domain.exceptions.ReservationNotFoundException;
 import com.example.domain.repositories.ReservationRepository;
 import com.example.services.WorkspaceService;
+import com.example.services.notifications.events.ReservationConfirmationEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -27,6 +29,9 @@ public class ReservationServiceTest {
 
     @Mock
     private WorkspaceService workspaceService;
+
+    @Mock
+    ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private ReservationServiceImpl reservationService;
@@ -57,6 +62,7 @@ public class ReservationServiceTest {
         assertDoesNotThrow(() -> reservationService.save(reservation));
 
         verify(reservationRepository, times(1)).save(reservation);
+        verify(eventPublisher).publishEvent(any(ReservationConfirmationEvent.class));
     }
 
 

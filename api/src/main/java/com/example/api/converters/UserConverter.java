@@ -4,32 +4,23 @@ import com.example.api.dto.requests.UserRequestDTO;
 import com.example.api.dto.responses.UserResponseDTO;
 import com.example.domain.entities.User;
 import com.example.domain.utils.PasswordUtils;
+import org.modelmapper.ModelMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class UserConverter {
 
+    private static final ModelMapper modelMapper = new ModelMapper();
+
     public static User toEntity(UserRequestDTO dto) {
-        User user = new User();
-
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setEmail(dto.getEmail());
+        User user = modelMapper.map(dto, User.class);
         user.setPassword(PasswordUtils.hashPassword(dto.getPassword()));
-
         return user;
     }
 
     public static UserResponseDTO toDTO(User user) {
-        UserResponseDTO dto = new UserResponseDTO();
-
-        dto.setUserId(user.getUserId());
-        dto.setFirstName(user.getFirstName());
-        dto.setLastName(user.getLastName());
-        dto.setEmail(user.getEmail());
-
-        return dto;
+        return modelMapper.map(user, UserResponseDTO.class);
     }
 
     public static List<UserResponseDTO> toDTO(List<User> users) {

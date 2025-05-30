@@ -5,10 +5,17 @@ import com.example.domain.exceptions.InvalidUserException;
 import com.example.domain.exceptions.UserNotFoundException;
 import com.example.domain.repositories.UserRepository;
 import com.example.domain.utils.PasswordUtils;
+import com.example.services.notifications.events.UserConfirmationEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import java.util.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.context.ApplicationEventPublisher;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -17,6 +24,9 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -41,6 +51,7 @@ class UserServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(user);
         userService.save(user);
         verify(userRepository).save(any(User.class));
+        verify(eventPublisher).publishEvent(any(UserConfirmationEvent.class));
     }
 
     @Test

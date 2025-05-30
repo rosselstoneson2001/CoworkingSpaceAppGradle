@@ -3,15 +3,13 @@ package com.example.domain.entities;
 
 import com.example.domain.entities.security.RoleEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "users")
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor

@@ -11,9 +11,11 @@ import com.example.domain.exceptions.enums.ValidationErrorCodes;
 import com.example.domain.repositories.ReservationRepository;
 import com.example.services.ReservationService;
 import com.example.services.WorkspaceService;
+import com.example.services.notifications.events.ReservationConfirmationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,11 +33,15 @@ import java.util.Optional;
 public class ReservationServiceImpl implements ReservationService {
 
     private static final Logger INTERNAL_LOGGER = LoggerFactory.getLogger("INTERNAL_LOGGER");
+    private final ApplicationEventPublisher eventPublisher;
     private final ReservationRepository reservationRepository;
     private final WorkspaceService workspaceService;
 
     @Autowired
-    public ReservationServiceImpl(ReservationRepository reservationRepository, WorkspaceService workspaceService) {
+    public ReservationServiceImpl(ApplicationEventPublisher eventPublisher,
+                                  ReservationRepository reservationRepository,
+                                  WorkspaceService workspaceService) {
+        this.eventPublisher = eventPublisher;
         this.reservationRepository = reservationRepository;
         this.workspaceService = workspaceService;
     }
@@ -73,6 +79,7 @@ public class ReservationServiceImpl implements ReservationService {
             throw new InvalidReservationException(ValidationErrorCodes.INVALID_DATE, "The workspace is not available for the selected dates.");
         }
         reservationRepository.save(reservation);
+        eventPublisher.publishEvent(new ReservationConfirmationEvent(reservation));
     }
 
     /**

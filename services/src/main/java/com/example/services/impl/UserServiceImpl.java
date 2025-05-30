@@ -8,9 +8,11 @@ import com.example.domain.exceptions.enums.ValidationErrorCodes;
 import com.example.domain.repositories.UserRepository;
 import com.example.domain.utils.PasswordUtils;
 import com.example.services.UserService;
+import com.example.services.notifications.events.UserConfirmationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +27,12 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private static final Logger INTERNAL_LOGGER = LoggerFactory.getLogger("INTERNAL_LOGGER");
+    private final ApplicationEventPublisher eventPublisher;
     private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(ApplicationEventPublisher eventPublisher, UserRepository userRepository) {
+        this.eventPublisher = eventPublisher;
         this.userRepository = userRepository;
     }
 
@@ -47,6 +51,7 @@ public class UserServiceImpl implements UserService {
 
         PasswordUtils.hashPassword(user.getPassword());
         userRepository.save(user);
+        eventPublisher.publishEvent(new UserConfirmationEvent(user));
         INTERNAL_LOGGER.info("User with email {} created successfully.", user.getEmail());
     }
 

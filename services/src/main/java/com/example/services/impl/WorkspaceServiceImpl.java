@@ -8,7 +8,9 @@ import com.example.domain.exceptions.enums.NotFoundErrorCodes;
 import com.example.domain.exceptions.enums.ValidationErrorCodes;
 import com.example.domain.repositories.WorkspaceRepository;
 import com.example.services.WorkspaceService;
+import com.example.services.notifications.events.WorkspaceConfitmationEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +27,13 @@ import java.util.Optional;
 public class WorkspaceServiceImpl implements WorkspaceService {
 
     private final WorkspaceRepository workspaceRepository;
+    private final ApplicationEventPublisher eventPublisher;
+
 
     @Autowired
-    public WorkspaceServiceImpl(WorkspaceRepository workspaceRepository) {
+    public WorkspaceServiceImpl(WorkspaceRepository workspaceRepository, ApplicationEventPublisher eventPublisher) {
         this.workspaceRepository = workspaceRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     /**
@@ -48,6 +53,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             throw new InvalidWorkspaceException(ValidationErrorCodes.MISSING_FIELD, "Workspace price is required.");
         }
         workspaceRepository.save(workspace);
+        eventPublisher.publishEvent(new WorkspaceConfitmationEvent(workspace));
     }
 
     /**
