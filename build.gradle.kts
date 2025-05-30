@@ -33,22 +33,26 @@ allprojects {
 
     dependencies {
 
-//        // SLF4J API (Interface for logging) || Log4j2 SLF4J Binding (to use SLF4J with Log4j2 as the backend)
-//        implementation("org.slf4j:slf4j-api:2.0.9")
-//        implementation("org.apache.logging.log4j:log4j-core:2.20.0")
-//        implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0")
+        // SLF4J API (Interface for logging) || Log4j2 SLF4J Binding (to use SLF4J with Log4j2 as the backend)
+        implementation("org.slf4j:slf4j-api:2.0.9")
+        implementation("org.apache.logging.log4j:log4j-api:2.20.0")
+        implementation("org.apache.logging.log4j:log4j-core:2.20.0")
+        implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0")
 
         // Exclude conflict dependencies
         configurations.all {
             exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
-            exclude(group = "ch.qos.logback", module = "logback-classic")
-            exclude(group = "org.apache.logging.log4j", module = "log4j-to-slf4j")
         }
 
     }
+
+    tasks.withType<JavaCompile> {
+        options.compilerArgs.add("-parameters")
+    }
+
 }
 
 application {
-    mainClass.set("com.example.mvc.CoSpaceApp")
+    mainClass.set("com.example.api.CoSpaceApp")
 }
 

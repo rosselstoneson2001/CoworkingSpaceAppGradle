@@ -7,6 +7,7 @@ dependencies {
 
     implementation(project(":services"))
     implementation(project(":domain"))
+    implementation(project(":security"))
 
     // Lombok
     compileOnly("org.projectlombok:lombok:1.18.30")
@@ -26,6 +27,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
 
+    // Model Mapper
+    implementation("org.modelmapper:modelmapper:3.1.1")
 
     // Tests
     testImplementation ("org.springframework.boot:spring-boot-starter-test")
@@ -33,15 +36,6 @@ dependencies {
     testImplementation ("org.mockito:mockito-junit-jupiter:4.0.0")
     testImplementation ("org.springframework.security:spring-security-test")
     testImplementation ("org.springframework.boot:spring-boot-starter-web")
-
-
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        exclude(group = "org.apache.logging.log4j", module = "log4j-core")
-        exclude(group = "org.apache.logging.log4j", module = "log4j-api")
-        exclude(group = "org.apache.logging.log4j", module = "log4j-slf4j2-impl")
-        exclude(group = "org.apache.logging.log4j", module = "log4j-to-slf4j")
-        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
-    }
 
 }
 

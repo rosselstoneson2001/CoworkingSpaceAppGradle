@@ -1,13 +1,12 @@
 package com.example.api.controllers;
 
+import com.example.api.converters.ReservationConverter;
 import com.example.api.dto.requests.ReservationRequestDTO;
 import com.example.api.dto.responses.ReservationResponseDTO;
+import com.example.api.facade.ReservationFacade;
 import com.example.domain.entities.Reservation;
-import com.example.domain.entities.Workspace;
-import com.example.domain.exceptions.WorkspaceNotFoundException;
-import com.example.domain.exceptions.enums.NotFoundErrorCodes;
-import com.example.api.converters.ReservationConverter;
 import com.example.services.ReservationService;
+import com.example.services.UserService;
 import com.example.services.WorkspaceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,11 +42,16 @@ import java.util.Optional;
 public class ReservationController {
 
     private final ReservationService reservationService;
-    private final WorkspaceService workspaceService;
+    private final ReservationFacade reservationFacade;
 
-    public ReservationController(ReservationService reservationService, WorkspaceService workspaceService) {
+    private final WorkspaceService workspaceService;
+    private final UserService userService;
+
+    public ReservationController(ReservationService reservationService, ReservationFacade reservationFacade, WorkspaceService workspaceService, UserService userService) {
         this.reservationService = reservationService;
+        this.reservationFacade = reservationFacade;
         this.workspaceService = workspaceService;
+        this.userService = userService;
     }
 
     /**
@@ -86,16 +90,9 @@ public class ReservationController {
      */
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('READ')")
-    public ResponseEntity<ReservationRequestDTO> createReservation(@RequestBody ReservationRequestDTO request) {
-       Optional<Workspace> workspaceOptional = workspaceService.findById(request.getWorkspaceId());
-       Workspace workspace = workspaceOptional.orElseThrow(() -> new WorkspaceNotFoundException(
-               NotFoundErrorCodes.WORKSPACE_NOT_FOUND,
-               "No Workspace found with ID: " + request.getWorkspaceId()
-       ));
-
-        Reservation reservation = ReservationConverter.toEntity(request, workspace);
-        reservationService.save(reservation);
-        return ResponseEntity.status(HttpStatus.CREATED).body(request);
+    public ResponseEntity<ReservationResponseDTO> createReservation(@RequestBody ReservationRequestDTO request) {
+        ReservationResponseDTO response = reservationFacade.createReservation(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
